@@ -5,7 +5,7 @@ Guidance for coding agents working in this repository. `CLAUDE.md` imports this 
 ## What this is
 
 A dashboard app shell (rail, content card, space panels, page header, list menus, search dialog,
-intro) shipped as a [shadcn registry](https://ui.shadcn.com/docs/registry) under `@wuchendi`.
+intro) shipped as a [shadcn registry](https://ui.shadcn.com/docs/registry) under `@cdlab`.
 Hosts copy the sources in with `shadcn add` and own them. No npm package, no server; `apps/*`
 exist only for development and the demo. Layout and conventions follow `bkhq/filemanager`.
 

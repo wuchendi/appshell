@@ -1,5 +1,5 @@
 {
-  "name": "@wuchendi/appshell",
+  "name": "@cdlab/appshell",
   "type": "module",
   "private": true,
   "workspaces": [

@@ -2,7 +2,7 @@
 
 A dashboard app shell — icon rail, one rounded content card, resizable space panels, one-row page
 headers, list header menus, a Cmd/Ctrl+K search dialog and first-run intros — shipped as a
-[shadcn registry](https://ui.shadcn.com/docs/registry) under the `@wuchendi` namespace. Host apps
+[shadcn registry](https://ui.shadcn.com/docs/registry) under the `@cdlab` namespace. Host apps
 copy the code in with `shadcn add` and own it from then on. There is no npm package and no
 server: everything is React on the client.
 
@@ -15,16 +15,16 @@ Demo: <https://wuchendi.github.io/appshell/demo/>
 Add the registry to the host's `components.json`:
 
 ```json
-{ "registries": { "@wuchendi": "https://wuchendi.github.io/appshell/r/{name}.json" } }
+{ "registries": { "@cdlab": "https://wuchendi.github.io/appshell/r/{name}.json" } }
 ```
 
 `/r/` is the latest release; `/v{version}/r/` pins one and `/next/r/` tracks `main`.
 
 ```bash
-bunx shadcn add @wuchendi/shell-layout   # AppShell, rail, panels, PageHeader (pulls in shell-core)
-bunx shadcn add @wuchendi/shell-menus    # Filter / Display menus, chips, header search
-bunx shadcn add @wuchendi/shell-search   # Cmd/Ctrl+K dialog
-bunx shadcn add @wuchendi/shell-intro    # first-run intro page
+bunx shadcn add @cdlab/shell-layout   # AppShell, rail, panels, PageHeader (pulls in shell-core)
+bunx shadcn add @cdlab/shell-menus    # Filter / Display menus, chips, header search
+bunx shadcn add @cdlab/shell-search   # Cmd/Ctrl+K dialog
+bunx shadcn add @cdlab/shell-intro    # first-run intro page
 ```
 
 Files land in `src/shell/**` and import each other as `@/shell/...`, so the host needs the usual

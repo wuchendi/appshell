@@ -1,5 +1,5 @@
 {
-  "name": "@wuchendi/shell-web",
+  "name": "@cdlab/shell-web",
   "type": "module",
   "version": "0.0.0",
   "private": true,

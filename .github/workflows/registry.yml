@@ -55,7 +55,7 @@ jobs:
 
           # The demo app, built from the checked-out main.
           bun install --frozen-lockfile
-          SHELL_WEB_BASE="/${GITHUB_REPOSITORY#*/}/demo/" bun run --filter @wuchendi/shell-web build
+          SHELL_WEB_BASE="/${GITHUB_REPOSITORY#*/}/demo/" bun run --filter @cdlab/shell-web build
           cp -R apps/shell-web/dist "$site/demo"
           # Pages serves only the site-root 404.html: deep demo links fall back to the demo app.
           cp "$site/demo/index.html" "$site/404.html"

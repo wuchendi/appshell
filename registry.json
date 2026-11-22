@@ -1,6 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry.json",
-  "name": "wuchendi",
+  "name": "cdlab",
   "homepage": "https://github.com/wuchendi/appshell",
   "items": [
     {
@@ -70,7 +70,7 @@
         "resizable",
         "scroll-area",
         "sheet",
-        "@wuchendi/shell-core"
+        "@cdlab/shell-core"
       ],
       "cssVars": {
         "theme": {
@@ -145,7 +145,7 @@
         "popover",
         "switch",
         "toggle-group",
-        "@wuchendi/shell-core"
+        "@cdlab/shell-core"
       ],
       "files": [
         {
@@ -166,7 +166,7 @@
       ],
       "registryDependencies": [
         "command",
-        "@wuchendi/shell-core"
+        "@cdlab/shell-core"
       ],
       "files": [
         {

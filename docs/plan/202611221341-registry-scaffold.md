@@ -11,7 +11,7 @@
 The dashboard chrome built in tinylink (PLAN-032 – PLAN-034) is generic. It ships here as a shadcn
 registry, structured like `bkhq/filemanager`, and tinylink moves to installing it.
 
-Decisions (user, 2026-11-22): repository `wuchendi/appshell`, namespace `@wuchendi`; labels are
+Decisions (user, 2026-11-22): repository `wuchendi/appshell` (Pages: `wuchendi.github.io/appshell`), registry namespace and package scope `@cdlab`; labels are
 passed in (`ShellLabels`, en/zh shipped) instead of i18next; tinylink will install from the
 registry. The generic column table is a later phase.
 

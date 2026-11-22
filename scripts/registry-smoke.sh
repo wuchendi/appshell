@@ -43,7 +43,7 @@ cat > components.json <<JSON
     "lib": "@/shared/lib",
     "hooks": "@/shared/hooks"
   },
-  "registries": { "@wuchendi": "$REGISTRY/{name}.json" }
+  "registries": { "@cdlab": "$REGISTRY/{name}.json" }
 }
 JSON
 cat > tsconfig.json <<'JSON'
@@ -85,7 +85,7 @@ echo '@import "tailwindcss";' > src/index.css
 
 bun add react react-dom @tanstack/react-router >/dev/null
 bun add -d vite @vitejs/plugin-react tailwindcss @tailwindcss/vite @types/react @types/react-dom @types/bun "typescript@npm:typescript@7" >/dev/null
-bunx shadcn add -y @wuchendi/shell-layout @wuchendi/shell-menus @wuchendi/shell-search @wuchendi/shell-intro
+bunx shadcn add -y @cdlab/shell-layout @cdlab/shell-menus @cdlab/shell-search @cdlab/shell-intro
 
 cat > src/main.tsx <<'TSX'
 import { createRootRoute, createRouter, Outlet, RouterProvider } from "@tanstack/react-router";
