@@ -1,9 +1,13 @@
-import type { ItemStatus } from "./data";
-import { Boxes, Plus } from "lucide-react";
-import { useRef } from "react";
+import type { Item, ItemStatus } from "./data";
+import type { ShellColumn } from "@/shell/collection/columns";
+import { Boxes, ExternalLink, Plus } from "lucide-react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { ContextMenuItem } from "@/components/ui/context-menu";
 import { DropdownMenuRadioGroup, DropdownMenuRadioItem } from "@/components/ui/dropdown-menu";
-import { SHELL_ROW_ATTR, useRowNavigation } from "@/shell/core/use-row-navigation";
+import { BatchBar, BatchBarSeparator } from "@/shell/collection/batch-bar";
+import { CollectionTable } from "@/shell/collection/collection-table";
+import { ColumnsSection } from "@/shell/collection/columns-section";
 import { FeatureIntro, IntroArtArrow, IntroArtCard } from "@/shell/intro/feature-intro";
 import { IconButton } from "@/shell/layout/icon-button";
 import { PageHeader } from "@/shell/layout/page-header";
@@ -23,11 +27,54 @@ export function OverviewPage() {
   );
 }
 
+const COLUMNS: ShellColumn<Item>[] = [
+  {
+    key: "name",
+    header: "Name",
+    sortKey: "name",
+    cell: i => <span className="truncate font-medium">{i.name}</span>,
+  },
+  {
+    key: "status",
+    header: "Status",
+    width: "6rem",
+    core: true,
+    cell: i => <span className="text-xs text-muted-foreground">{i.status}</span>,
+  },
+  {
+    key: "owner",
+    header: "Owner",
+    width: "6rem",
+    cell: i => <span className="text-xs text-muted-foreground">{i.owner}</span>,
+  },
+  {
+    key: "updated",
+    header: "Updated",
+    align: "end",
+    sortKey: "updated",
+    cell: i => <span className="text-xs text-muted-foreground tabular-nums">{i.updated}</span>,
+  },
+];
+
+function toggled(prev: Set<string>, id: string, on: boolean): Set<string> {
+  const next = new Set(prev);
+  if (on)
+    next.add(id);
+  else
+    next.delete(id);
+  return next;
+}
+
 export function ItemsPage() {
   const { status, setStatus, query, setQuery } = useDemoStore();
-  const listRef = useRef<HTMLDivElement>(null);
-  useRowNavigation(listRef);
+  const [hidden, setHidden] = useState<string[]>([]);
+  const [sortKey, setSortKey] = useState("updated");
+  const [selected, setSelected] = useState<Set<string>>(() => new Set());
+  const [opened, setOpened] = useState<string | null>(null);
   const rows = ITEMS.filter(i => (status === "all" || i.status === status) && i.name.toLowerCase().includes(query.toLowerCase()));
+  const sorted = [...rows].sort((a, b) => (sortKey === "name"
+    ? a.name.localeCompare(b.name)
+    : b.updated.localeCompare(a.updated)));
   const count = status === "all"
     ? 0
     : 1;
@@ -69,7 +116,13 @@ export function ItemsPage() {
         actions={(
           <>
             <DisplayMenu>
-              <MenuSection label="Layout"><span className="text-xs text-muted-foreground">List</span></MenuSection>
+              <ColumnsSection
+                columns={COLUMNS}
+                hidden={hidden}
+                onToggle={key => setHidden(h => (h.includes(key)
+                  ? h.filter(k => k !== key)
+                  : [...h, key]))}
+              />
             </DisplayMenu>
             <IconButton label="New item" icon={Plus} />
           </>
@@ -98,22 +151,33 @@ export function ItemsPage() {
             />
           )
         : (
-            <div ref={listRef} className="flex flex-col gap-px">
-              {rows.map(i => (
-                <div
-                  key={i.id}
-                  {...{ [SHELL_ROW_ATTR]: "" }}
-                  tabIndex={0}
-                  className="grid h-9 grid-cols-[minmax(0,1fr)_6rem_6rem_6.5rem] items-center gap-3 rounded-md px-2 text-[13px] outline-none hover:bg-secondary/50 focus-visible:bg-secondary/60 focus-visible:ring-2 focus-visible:ring-ring/50"
-                >
-                  <span className="truncate font-medium">{i.name}</span>
-                  <span className="text-xs text-muted-foreground">{i.status}</span>
-                  <span className="text-xs text-muted-foreground">{i.owner}</span>
-                  <span className="text-right text-xs text-muted-foreground tabular-nums">{i.updated}</span>
-                </div>
-              ))}
-            </div>
+            <CollectionTable
+              label="Items"
+              columns={COLUMNS}
+              rows={sorted}
+              getRowId={i => i.id}
+              hiddenColumns={hidden}
+              sort={{ key: sortKey, onSort: setSortKey }}
+              selection={{
+                selected,
+                onToggle: (id, on) => setSelected(prev => toggled(prev, id, on)),
+                onToggleAll: on => setSelected(on
+                  ? new Set(sorted.map(i => i.id))
+                  : new Set()),
+              }}
+              onOpen={i => setOpened(i.name)}
+              rowMenu={i => <ContextMenuItem onClick={() => setOpened(i.name)}>Open</ContextMenuItem>}
+              rowActions={i => <IconButton label="Open" icon={ExternalLink} onClick={() => setOpened(i.name)} />}
+            />
           )}
+      {opened && <p className="text-xs text-muted-foreground">{`Opened: ${opened}`}</p>}
+      {selected.size > 0 && (
+        <BatchBar count={selected.size} onClear={() => setSelected(new Set())}>
+          <Button variant="ghost" size="xs">Archive</Button>
+          <BatchBarSeparator />
+          <Button variant="ghost" size="xs" className="text-destructive hover:text-destructive">Delete</Button>
+        </BatchBar>
+      )}
     </div>
   );
 }

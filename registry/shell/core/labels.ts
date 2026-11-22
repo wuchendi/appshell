@@ -15,6 +15,12 @@ export interface ShellLabels {
   reset: string;
   clearSearch: string;
   loading: string;
+  /** `{count}` is replaced with the number of selected rows. */
+  selectedCount: string;
+  selectAll: string;
+  deselectAll: string;
+  clearSelection: string;
+  columns: string;
 }
 
 export const shellLabelsEn: ShellLabels = {
@@ -30,6 +36,11 @@ export const shellLabelsEn: ShellLabels = {
   reset: "Reset",
   clearSearch: "Clear search",
   loading: "Loading",
+  selectedCount: "{count} selected",
+  selectAll: "Select all",
+  deselectAll: "Deselect all",
+  clearSelection: "Clear selection",
+  columns: "Columns",
 };
 
 export const shellLabelsZh: ShellLabels = {
@@ -45,6 +56,11 @@ export const shellLabelsZh: ShellLabels = {
   reset: "重置",
   clearSearch: "清除搜索",
   loading: "加载中",
+  selectedCount: "已选 {count} 项",
+  selectAll: "全选",
+  deselectAll: "取消全选",
+  clearSelection: "取消选择",
+  columns: "列",
 };
 
 /** Replaces `{name}` placeholders in a label. */

@@ -16,6 +16,7 @@ registry/shell/   the product (same `@/shell/...` layout as in a host)
   menus/          Filter / Display menus, chips, header search
   search/         Cmd/Ctrl+K dialog
   intro/          FeatureIntro
+  collection/     CollectionTable, BatchBar, ColumnsSection, column helpers
 registry.json     items, files, dependencies
 apps/shell-web    demo app (Vite + React + TanStack Router)
 docs/             plan/, task/, changelog.md

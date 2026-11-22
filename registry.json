@@ -156,6 +156,45 @@
       ]
     },
     {
+      "name": "shell-collection",
+      "type": "registry:block",
+      "title": "App shell: collection table",
+      "description": "<CollectionTable>: a column list with a sticky header (select all, sortable columns), 36px rows that open on click or Enter, J/K navigation, a right-click row menu, hover actions and narrow-screen core columns; <BatchBar> for the selection and <ColumnsSection> for the display menu's column switches.",
+      "dependencies": [
+        "cn",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button",
+        "checkbox",
+        "context-menu",
+        "@cdlab/shell-core",
+        "@cdlab/shell-menus"
+      ],
+      "files": [
+        {
+          "path": "registry/shell/collection/columns.ts",
+          "type": "registry:file",
+          "target": "~/src/shell/collection/columns.ts"
+        },
+        {
+          "path": "registry/shell/collection/collection-table.tsx",
+          "type": "registry:file",
+          "target": "~/src/shell/collection/collection-table.tsx"
+        },
+        {
+          "path": "registry/shell/collection/batch-bar.tsx",
+          "type": "registry:file",
+          "target": "~/src/shell/collection/batch-bar.tsx"
+        },
+        {
+          "path": "registry/shell/collection/columns-section.tsx",
+          "type": "registry:file",
+          "target": "~/src/shell/collection/columns-section.tsx"
+        }
+      ]
+    },
+    {
       "name": "shell-search",
       "type": "registry:block",
       "title": "App shell: search dialog",

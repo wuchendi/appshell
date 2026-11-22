@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-11-22 — v0.2.0
+
+- `shell-collection`: `CollectionTable`, `BatchBar`, `ColumnsSection`, `ShellColumn` and the
+  pure column helpers (`visibleColumns`, `gridTemplate`, `hideableColumns`).
+- `ShellLabels` gains `selectedCount`, `selectAll`, `deselectAll`, `clearSelection`, `columns`;
+  hosts that build their own labels must add them.
+
 ## 2026-11-22
 
 - Namespace and package scope are `@cdlab` (items `@cdlab/shell-*`); the repository and Pages stay

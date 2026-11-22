@@ -85,13 +85,15 @@ echo '@import "tailwindcss";' > src/index.css
 
 bun add react react-dom @tanstack/react-router >/dev/null
 bun add -d vite @vitejs/plugin-react tailwindcss @tailwindcss/vite @types/react @types/react-dom @types/bun "typescript@npm:typescript@7" >/dev/null
-bunx shadcn add -y @cdlab/shell-layout @cdlab/shell-menus @cdlab/shell-search @cdlab/shell-intro
+bunx shadcn add -y @cdlab/shell-layout @cdlab/shell-menus @cdlab/shell-search @cdlab/shell-intro @cdlab/shell-collection
 
 cat > src/main.tsx <<'TSX'
 import { createRootRoute, createRouter, Outlet, RouterProvider } from "@tanstack/react-router";
 import { Gauge } from "lucide-react";
 import { createRoot } from "react-dom/client";
 import { shellLabelsZh } from "@/shell/core/labels";
+import { BatchBar } from "@/shell/collection/batch-bar";
+import { CollectionTable } from "@/shell/collection/collection-table";
 import { FeatureIntro } from "@/shell/intro/feature-intro";
 import { AppShell } from "@/shell/layout/app-shell";
 import { PageHeader } from "@/shell/layout/page-header";
@@ -111,6 +113,8 @@ const root = createRootRoute({
         actions={<DisplayMenu>y</DisplayMenu>}
       />
       <FeatureIntro icon={Gauge} label="L" title="T" description="D" action={null} art={null} />
+      <CollectionTable columns={[{ key: "name", header: "Name", cell: (r: { id: string }) => r.id }]} rows={[{ id: "a" }]} getRowId={r => r.id} />
+      <BatchBar count={1} onClear={() => {}}>z</BatchBar>
       <Outlet />
     </AppShell>
   ),

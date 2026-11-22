@@ -25,6 +25,7 @@ bunx shadcn add @cdlab/shell-layout   # AppShell, rail, panels, PageHeader (pull
 bunx shadcn add @cdlab/shell-menus    # Filter / Display menus, chips, header search
 bunx shadcn add @cdlab/shell-search   # Cmd/Ctrl+K dialog
 bunx shadcn add @cdlab/shell-intro    # first-run intro page
+bunx shadcn add @cdlab/shell-collection  # column table, batch bar, column switches
 ```
 
 Files land in `src/shell/**` and import each other as `@/shell/...`, so the host needs the usual
@@ -38,6 +39,7 @@ progress-bar keyframes to the host stylesheet.
 | `shell-menus` | `FilterMenu`, `DisplayMenu`, `MenuSection`, `MenuRow`, `MenuSwitch`, `Chips`, `ChipCount`, `ResetButton`, `HeaderSearch` |
 | `shell-search` | `SearchDialog` over the host's own search function plus a "Go to" list of the spaces |
 | `shell-intro` | `FeatureIntro`, `IntroArtCard`, `IntroArtArrow` |
+| `shell-collection` | `CollectionTable` (sticky header, sortable columns, select all, 36px rows that open on click / Enter, J/K, right-click menu, hover actions, narrow `core` columns), `BatchBar`, `ColumnsSection`; `ShellColumn` |
 
 ## Use
 
@@ -95,6 +97,9 @@ export function Shell() {
   `shellLabelsZh` ship with the shell; hosts on i18n build the object from their translations.
 - **Rows**: give list rows `data-shell-row` and `tabIndex={0}`, then `useRowNavigation(listRef)`
   for J/K.
+- **Tables**: describe columns as `ShellColumn<T>` (the first is the primary column; `width` is a
+  grid track; `sortKey` makes the header sort; `core` keeps it on narrow screens) and render
+  `<CollectionTable>`; put `<ColumnsSection>` in the display menu and `<BatchBar>` after the list.
 - **Search**: render `<SearchDialog>` yourself (open state from `onSearch`) and pass
   `search={(query, signal) => Promise<ShellSearchResult[]>}`.
 
