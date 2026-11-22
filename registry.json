@@ -1,0 +1,197 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "wuchendi",
+  "homepage": "https://github.com/wuchendi/appshell",
+  "items": [
+    {
+      "name": "shell-core",
+      "type": "registry:lib",
+      "title": "App shell: core",
+      "description": "Labels (en/zh) and their provider, space definitions and path matching, the persisted panel state, the typing guard for bare-key shortcuts, J/K row navigation and the mobile breakpoint hook.",
+      "dependencies": [
+        "zustand",
+        "lucide-react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "registry/shell/core/labels.ts",
+          "type": "registry:file",
+          "target": "~/src/shell/core/labels.ts"
+        },
+        {
+          "path": "registry/shell/core/spaces.ts",
+          "type": "registry:file",
+          "target": "~/src/shell/core/spaces.ts"
+        },
+        {
+          "path": "registry/shell/core/panel-store.ts",
+          "type": "registry:file",
+          "target": "~/src/shell/core/panel-store.ts"
+        },
+        {
+          "path": "registry/shell/core/is-typing.ts",
+          "type": "registry:file",
+          "target": "~/src/shell/core/is-typing.ts"
+        },
+        {
+          "path": "registry/shell/core/use-row-navigation.ts",
+          "type": "registry:file",
+          "target": "~/src/shell/core/use-row-navigation.ts"
+        },
+        {
+          "path": "registry/shell/core/use-is-mobile.ts",
+          "type": "registry:file",
+          "target": "~/src/shell/core/use-is-mobile.ts"
+        },
+        {
+          "path": "registry/shell/core/keys.ts",
+          "type": "registry:file",
+          "target": "~/src/shell/core/keys.ts"
+        }
+      ]
+    },
+    {
+      "name": "shell-layout",
+      "type": "registry:block",
+      "title": "App shell: layout",
+      "description": "<AppShell>: an icon rail on a canvas, one rounded content card with a resizable, foldable space panel per space, a mobile sheet, Cmd/Ctrl+B / Cmd/Ctrl+K / C shortcuts and a navigation progress bar. Plus the one-row <PageHeader>, <IconButton> and the panel building blocks (PanelFrame, PanelSection, PanelRow, PanelAllRow).",
+      "dependencies": [
+        "@tanstack/react-router",
+        "react-resizable-panels",
+        "cn",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button",
+        "tooltip",
+        "dropdown-menu",
+        "context-menu",
+        "resizable",
+        "scroll-area",
+        "sheet",
+        "@wuchendi/shell-core"
+      ],
+      "cssVars": {
+        "theme": {
+          "color-canvas": "var(--canvas)"
+        },
+        "light": {
+          "canvas": "oklch(0.965 0 0)"
+        },
+        "dark": {
+          "canvas": "oklch(0.11 0 0)"
+        }
+      },
+      "css": {
+        "@keyframes shell-nav-progress": {
+          "from": {
+            "transform": "translateX(-100%)"
+          },
+          "to": {
+            "transform": "translateX(300%)"
+          }
+        }
+      },
+      "files": [
+        {
+          "path": "registry/shell/layout/app-shell.tsx",
+          "type": "registry:file",
+          "target": "~/src/shell/layout/app-shell.tsx"
+        },
+        {
+          "path": "registry/shell/layout/rail.tsx",
+          "type": "registry:file",
+          "target": "~/src/shell/layout/rail.tsx"
+        },
+        {
+          "path": "registry/shell/layout/panel.tsx",
+          "type": "registry:file",
+          "target": "~/src/shell/layout/panel.tsx"
+        },
+        {
+          "path": "registry/shell/layout/page-header.tsx",
+          "type": "registry:file",
+          "target": "~/src/shell/layout/page-header.tsx"
+        },
+        {
+          "path": "registry/shell/layout/icon-button.tsx",
+          "type": "registry:file",
+          "target": "~/src/shell/layout/icon-button.tsx"
+        },
+        {
+          "path": "registry/shell/layout/navigation-progress.tsx",
+          "type": "registry:file",
+          "target": "~/src/shell/layout/navigation-progress.tsx"
+        },
+        {
+          "path": "registry/shell/layout/page-context.ts",
+          "type": "registry:file",
+          "target": "~/src/shell/layout/page-context.ts"
+        }
+      ]
+    },
+    {
+      "name": "shell-menus",
+      "type": "registry:block",
+      "title": "App shell: list header menus",
+      "description": "Header controls for list pages: Filter (an icon carrying the active count, with reset) and Display popovers, chips, label/switch rows, a reset button and a search icon that expands into a field (/ to open, Esc to clear).",
+      "dependencies": [
+        "cn",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button",
+        "popover",
+        "switch",
+        "toggle-group",
+        "@wuchendi/shell-core"
+      ],
+      "files": [
+        {
+          "path": "registry/shell/menus/menus.tsx",
+          "type": "registry:file",
+          "target": "~/src/shell/menus/menus.tsx"
+        }
+      ]
+    },
+    {
+      "name": "shell-search",
+      "type": "registry:block",
+      "title": "App shell: search dialog",
+      "description": "Cmd/Ctrl+K dialog over the host's own search function (debounced, aborted when superseded) plus a Go to list of the spaces.",
+      "dependencies": [
+        "@tanstack/react-router",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "command",
+        "@wuchendi/shell-core"
+      ],
+      "files": [
+        {
+          "path": "registry/shell/search/search-dialog.tsx",
+          "type": "registry:file",
+          "target": "~/src/shell/search/search-dialog.tsx"
+        }
+      ]
+    },
+    {
+      "name": "shell-intro",
+      "type": "registry:block",
+      "title": "App shell: feature intro",
+      "description": "First-run page for an empty list: label, title, description, one action and a static picture (IntroArtCard, IntroArtArrow).",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "registry/shell/intro/feature-intro.tsx",
+          "type": "registry:file",
+          "target": "~/src/shell/intro/feature-intro.tsx"
+        }
+      ]
+    }
+  ]
+}

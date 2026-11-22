@@ -1,0 +1,10 @@
+[test]
+coverageThreshold = { line = 0.80, function = 0.80 }
+coverageSkipTestFiles = true
+# React components are exercised in the demo app; unit coverage tracks the pure modules.
+coveragePathIgnorePatterns = ["apps/**", "registry/shell/**/*.tsx"]
+preload = ["./scripts/happy-dom.ts"]
+
+[install]
+# registry/ sources resolve dependencies from the root node_modules.
+linker = "hoisted"
