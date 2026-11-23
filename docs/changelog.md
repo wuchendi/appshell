@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-11-23 — v0.3.1
+
+Requested by azctl (`docs/appshell-requirements.md`, R6–R8). No host changes needed.
+
+- `CollectionTable` cells clip; string and number cells end with an ellipsis. A 4px inset keeps
+  focus rings of controls inside a cell visible.
+- Rows are at least 36px and grow with multi-line cells (`min-h-9 py-1`).
+- Wide tables: the header row and the rows get `min-width` = the sum of the track minimums
+  (`tableMinWidth`), the rows scroll sideways inside their own scroll area (horizontal scrollbar
+  from the host's `ScrollBar`), and the header sits outside it, following `scrollLeft` — static in
+  fill mode, `sticky top-12` otherwise, so it still sticks while the page scrolls. The table root
+  has `contain: inline-size` and never widens its parent; the pager keeps the visible width.
+- The actions cell is pinned to the right edge (`sticky right-0`, `bg-inherit`); row hover,
+  focus and selection backgrounds are opaque `color-mix` values so it covers what scrolls under.
+- New pure helpers `gridTracks`, `trackMinimum`, `tableMinWidth`. `shell-collection` now lists
+  `@base-ui/react` as a dependency.
+- Pitfall: `overflow-x` on an ancestor disables `position: sticky` for vertical scrolling, hence
+  the header outside the scroller. A `w-max` table would size the primary column to its longest
+  value; the summed track minimums avoid that.
+
 ## 2026-11-23 — v0.3.0
 
 Requested by azctl (`docs/appshell-requirements.md`, R1–R5).

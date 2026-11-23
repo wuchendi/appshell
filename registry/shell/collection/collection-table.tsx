@@ -1,15 +1,17 @@
+import { ScrollArea as ScrollAreaPrimitive } from "@base-ui/react/scroll-area";
 import { cn } from "cn";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import type { KeyboardEvent, MouseEvent, ReactElement, ReactNode } from "react";
 import { Fragment, useRef } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ContextMenu, ContextMenuContent, ContextMenuTrigger } from "@/components/ui/context-menu";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollBar } from "@/components/ui/scroll-area";
 import type { ShellColumn } from "@/shell/collection/columns";
 import {
   ACTIONS_WIDTH,
-  gridTemplate,
+  gridTracks,
   ROW_INTERACTIVE,
+  tableMinWidth,
   visibleColumns,
 } from "@/shell/collection/columns";
 import { useShellLabels } from "@/shell/core/labels";
@@ -55,11 +57,30 @@ const SKELETON_ROWS = 8;
 
 const ALIGN_END = "flex justify-end text-right";
 
+// Opaque row states (the secondary tint mixed into the background), so the pinned actions cell
+// can inherit them and cover what scrolls underneath.
+const ROW_STATES =
+  "hover:bg-[color-mix(in_oklab,var(--color-secondary)_50%,var(--color-background))] focus-visible:bg-[color-mix(in_oklab,var(--color-secondary)_60%,var(--color-background))] data-selected:bg-[color-mix(in_oklab,var(--color-secondary)_70%,var(--color-background))]";
+
+// Cells clip; the 4px inset keeps focus rings of controls inside them visible.
+const CELL = "-m-1 min-w-0 overflow-hidden p-1";
+
+/** Plain text and numbers end with an ellipsis; other nodes manage their own overflow. */
+function cellContent(node: ReactNode): ReactNode {
+  return typeof node === "string" || typeof node === "number" ? (
+    <span className="block min-w-0 truncate">{node}</span>
+  ) : (
+    node
+  );
+}
+
 /**
- * A column list: a sticky header (select all, sortable columns) over 36px rows. Rows open on
- * click or Enter, take J/K, offer a right-click menu and reveal their actions on hover. Narrow
- * screens keep the primary and `core` columns. Inside `<PageBody fill>` the table scrolls on its
- * own with the header pinned to its top; elsewhere the header pins below the page header.
+ * A column list: a sticky header (select all, sortable columns) over rows of at least 36px. Rows
+ * open on click or Enter, take J/K, offer a right-click menu and reveal their actions (pinned to
+ * the right edge) on hover. Narrow screens keep the primary and `core` columns. Inside
+ * `<PageBody fill>` the rows scroll on their own under the header; elsewhere the header pins below
+ * the page header. A table wider than its container scrolls sideways inside itself and never
+ * widens its parent.
  */
 export function CollectionTable<T>({
   columns,
@@ -83,13 +104,16 @@ export function CollectionTable<T>({
   const narrow = useIsMobile();
   const fill = usePageFill();
   const listRef = useRef<HTMLDivElement>(null);
+  const headRef = useRef<HTMLDivElement>(null);
   useRowNavigation(listRef);
 
   const shown = visibleColumns(columns, hiddenColumns, narrow);
-  const template = gridTemplate(shown, {
+  const tracks = gridTracks(shown, {
     selectable: !!selection,
     actions: rowActions ? actionsWidth : null,
   });
+  const template = tracks.join(" ");
+  const minWidth = tableMinWidth(tracks);
   const ids = rows.map(getRowId);
   const allSelected = !!selection && ids.length > 0 && ids.every(id => selection.selected.has(id));
 
@@ -104,153 +128,178 @@ export function CollectionTable<T>({
     }
   }
 
-  const table = (
-    <div role="table" aria-label={label} ref={listRef} className="flex flex-col gap-px">
+  return (
+    <div
+      role="table"
+      aria-label={label}
+      ref={listRef}
+      className={cn("flex min-w-0 flex-col [contain:inline-size]", fill && "min-h-0 flex-1")}
+    >
+      {/* Outside the scroll area so it can stick to the page; follows the rows sideways. */}
       <div
-        role="row"
-        style={{ gridTemplateColumns: template }}
+        ref={headRef}
         className={cn(
-          "sticky z-10 grid h-9 items-center gap-3 border-b bg-background px-2 text-xs text-muted-foreground",
-          fill ? "top-0" : "top-12",
+          "z-10 shrink-0 overflow-hidden border-b bg-background",
+          !fill && "sticky top-12",
           headerClassName,
         )}
       >
-        {selection && (
-          <span className="flex">
-            <Checkbox
-              checked={allSelected}
-              disabled={loading || ids.length === 0}
-              onCheckedChange={v => selection.onToggleAll(v === true)}
-              aria-label={labels.selectAll}
-            />
-          </span>
-        )}
-        {shown.map(c => {
-          const active = !!sort && !!c.sortKey && sort.key === c.sortKey;
-          const Arrow = sort?.direction === "asc" ? ArrowUp : ArrowDown;
-          return (
-            <span
-              key={c.key}
-              role="columnheader"
-              aria-sort={
-                active ? (sort?.direction === "asc" ? "ascending" : "descending") : undefined
-              }
-              className={cn("min-w-0 truncate", c.align === "end" && ALIGN_END)}
-            >
-              {c.sortKey && sort ? (
-                <button
-                  type="button"
-                  onClick={() => sort.onSort(c.sortKey!)}
-                  className={cn(
-                    "inline-flex items-center gap-0.5 hover:text-foreground",
-                    active && "text-foreground",
-                  )}
-                >
-                  {c.header}
-                  {active && <Arrow className="size-3" />}
-                </button>
-              ) : (
-                c.header
-              )}
+        <div
+          role="row"
+          style={{ gridTemplateColumns: template, minWidth }}
+          className="grid h-9 items-center gap-3 px-2 text-xs text-muted-foreground"
+        >
+          {selection && (
+            <span className="flex">
+              <Checkbox
+                checked={allSelected}
+                disabled={loading || ids.length === 0}
+                onCheckedChange={v => selection.onToggleAll(v === true)}
+                aria-label={labels.selectAll}
+              />
             </span>
-          );
-        })}
-        {rowActions && <span />}
-      </div>
-      {loading &&
-        Array.from({ length: SKELETON_ROWS }, (_, i) => (
-          <div
-            // biome-ignore lint/suspicious/noArrayIndexKey: placeholders have no identity
-            key={i}
-            role="row"
-            aria-hidden="true"
-            data-slot="collection-skeleton"
-            style={{ gridTemplateColumns: template }}
-            className="grid h-9 items-center gap-3 px-2"
-          >
-            {selection && <span />}
-            {shown.map((c, j) => (
-              <span key={c.key} className={cn("flex", c.align === "end" && "justify-end")}>
-                <span
-                  className={cn("h-3 animate-pulse rounded bg-muted", j === 0 ? "w-2/3" : "w-1/2")}
-                />
-              </span>
-            ))}
-            {rowActions && <span />}
-          </div>
-        ))}
-      {!loading && rows.length === 0 && empty}
-      {!loading &&
-        rows.map(row => {
-          const id = getRowId(row);
-          const selected = !!selection?.selected.has(id);
-          const element = (
-            <div
-              role="row"
-              tabIndex={0}
-              {...{ [SHELL_ROW_ATTR]: "" }}
-              data-selected={selected || undefined}
-              style={{ gridTemplateColumns: template }}
-              onClick={e => openFromClick(row, e)}
-              onKeyDown={e => openOnEnter(row, e)}
-              className={cn(
-                "group grid h-9 min-w-0 items-center gap-3 rounded-md px-2 text-[13px] outline-none transition-colors hover:bg-secondary/50 focus-visible:bg-secondary/60 focus-visible:ring-2 focus-visible:ring-ring/50 data-selected:bg-secondary/70",
-                onOpen && "cursor-pointer",
-                getRowClassName?.(row),
-              )}
-            >
-              {selection && (
-                <span className="flex">
-                  <Checkbox
-                    checked={selected}
-                    onCheckedChange={v => selection.onToggle(id, v === true)}
-                    aria-label={id}
+          )}
+          {shown.map(c => {
+            const active = !!sort && !!c.sortKey && sort.key === c.sortKey;
+            const Arrow = sort?.direction === "asc" ? ArrowUp : ArrowDown;
+            return (
+              <span
+                key={c.key}
+                role="columnheader"
+                aria-sort={
+                  active ? (sort?.direction === "asc" ? "ascending" : "descending") : undefined
+                }
+                className={cn("min-w-0 truncate", c.align === "end" && ALIGN_END)}
+              >
+                {c.sortKey && sort ? (
+                  <button
+                    type="button"
+                    onClick={() => sort.onSort(c.sortKey!)}
                     className={cn(
-                      "transition-opacity",
-                      !selected &&
-                        "pointer-fine:opacity-0 pointer-fine:group-hover:opacity-100 pointer-fine:focus-visible:opacity-100",
+                      "inline-flex items-center gap-0.5 hover:text-foreground",
+                      active && "text-foreground",
                     )}
-                  />
-                </span>
-              )}
-              {shown.map(c => (
-                <span
-                  key={c.key}
-                  role="cell"
-                  className={cn("min-w-0", c.align === "end" && ALIGN_END)}
+                  >
+                    {c.header}
+                    {active && <Arrow className="size-3" />}
+                  </button>
+                ) : (
+                  c.header
+                )}
+              </span>
+            );
+          })}
+          {rowActions && <span />}
+        </div>
+      </div>
+      <ScrollAreaPrimitive.Root
+        data-slot="collection-scroll"
+        className={cn("relative min-w-0", fill && "min-h-0 flex-1")}
+      >
+        <ScrollAreaPrimitive.Viewport
+          className="size-full outline-none"
+          onScroll={e => {
+            if (headRef.current) headRef.current.scrollLeft = e.currentTarget.scrollLeft;
+          }}
+        >
+          <div role="rowgroup" style={{ minWidth }} className="flex flex-col gap-px py-px">
+            {loading &&
+              Array.from({ length: SKELETON_ROWS }, (_, i) => (
+                <div
+                  // biome-ignore lint/suspicious/noArrayIndexKey: placeholders have no identity
+                  key={i}
+                  role="row"
+                  aria-hidden="true"
+                  data-slot="collection-skeleton"
+                  style={{ gridTemplateColumns: template }}
+                  className="grid h-9 items-center gap-3 px-2"
                 >
-                  {c.cell(row)}
-                </span>
-              ))}
-              {rowActions && (
-                <span className="flex justify-end opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100 has-[[aria-expanded=true]]:opacity-100">
-                  {rowActions(row)}
-                </span>
-              )}
-            </div>
-          );
-          const sub = renderSubRow?.(row);
-          return (
-            <Fragment key={id}>
-              {withMenu(element, rowMenu?.(row))}
-              {sub != null && (
-                <div role="row" data-slot="collection-subrow" className="px-2 pb-2">
-                  <div role="cell" className="min-w-0">
-                    {sub}
-                  </div>
+                  {selection && <span />}
+                  {shown.map((c, j) => (
+                    <span key={c.key} className={cn("flex", c.align === "end" && "justify-end")}>
+                      <span
+                        className={cn(
+                          "h-3 animate-pulse rounded bg-muted",
+                          j === 0 ? "w-2/3" : "w-1/2",
+                        )}
+                      />
+                    </span>
+                  ))}
+                  {rowActions && <span />}
                 </div>
-              )}
-            </Fragment>
-          );
-        })}
+              ))}
+            {!loading && rows.length === 0 && empty}
+            {!loading &&
+              rows.map(row => {
+                const id = getRowId(row);
+                const selected = !!selection?.selected.has(id);
+                const element = (
+                  <div
+                    role="row"
+                    tabIndex={0}
+                    {...{ [SHELL_ROW_ATTR]: "" }}
+                    data-selected={selected || undefined}
+                    style={{ gridTemplateColumns: template }}
+                    onClick={e => openFromClick(row, e)}
+                    onKeyDown={e => openOnEnter(row, e)}
+                    className={cn(
+                      "group grid min-h-9 min-w-0 items-center gap-3 rounded-md px-2 py-1 text-[13px] outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/50",
+                      ROW_STATES,
+                      onOpen && "cursor-pointer",
+                      getRowClassName?.(row),
+                    )}
+                  >
+                    {selection && (
+                      <span className="flex">
+                        <Checkbox
+                          checked={selected}
+                          onCheckedChange={v => selection.onToggle(id, v === true)}
+                          aria-label={id}
+                          className={cn(
+                            "transition-opacity",
+                            !selected &&
+                              "pointer-fine:opacity-0 pointer-fine:group-hover:opacity-100 pointer-fine:focus-visible:opacity-100",
+                          )}
+                        />
+                      </span>
+                    )}
+                    {shown.map(c => (
+                      <span
+                        key={c.key}
+                        role="cell"
+                        className={cn(CELL, c.align === "end" && ALIGN_END)}
+                      >
+                        {cellContent(c.cell(row))}
+                      </span>
+                    ))}
+                    {rowActions && (
+                      <span className="sticky right-0 flex justify-end rounded-r-md bg-inherit opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100 has-[[aria-expanded=true]]:opacity-100">
+                        {rowActions(row)}
+                      </span>
+                    )}
+                  </div>
+                );
+                const sub = renderSubRow?.(row);
+                return (
+                  <Fragment key={id}>
+                    {withMenu(element, rowMenu?.(row))}
+                    {sub != null && (
+                      <div role="row" data-slot="collection-subrow" className="px-2 pb-2">
+                        <div role="cell" className="min-w-0">
+                          {sub}
+                        </div>
+                      </div>
+                    )}
+                  </Fragment>
+                );
+              })}
+          </div>
+        </ScrollAreaPrimitive.Viewport>
+        {fill && <ScrollBar />}
+        <ScrollBar orientation="horizontal" />
+        <ScrollAreaPrimitive.Corner />
+      </ScrollAreaPrimitive.Root>
     </div>
-  );
-
-  if (!fill) return table;
-  return (
-    <ScrollArea data-slot="collection-scroll" className="min-h-0 flex-1">
-      {table}
-    </ScrollArea>
   );
 }
 

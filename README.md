@@ -115,7 +115,10 @@ export function Shell() {
   grid track; `sortKey` makes the header sort; `core` keeps it on narrow screens) and render
   `<CollectionTable>`; put `<ColumnsSection>` in the display menu and `<BatchBar>` after the list.
   `renderSubRow={row => node | null}` adds a full-width block under a row (you own the expanded
-  state; J/K skips it), `loading` shows skeleton rows and `empty` replaces the rows.
+  state; J/K skips it), `loading` shows skeleton rows and `empty` replaces the rows. Cells clip
+  (plain text and numbers end with an ellipsis), rows grow past 36px for multi-line cells, and a
+  table wider than its container scrolls sideways inside itself — the header follows, the actions
+  stay pinned to the right edge, and the table never widens its parent card.
 - **Paging**: client mode — sort and filter first, then
   `const { rows, pager } = useCollectionPage(sorted)` and render `<CollectionTable rows={rows}>`
   followed by `<CollectionPager {...pager} selected={n} />`. Server mode — pass `page`, `pageSize`,

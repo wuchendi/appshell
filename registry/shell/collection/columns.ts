@@ -30,18 +30,49 @@ export function visibleColumns<T>(
   return columns.filter((c, i) => i === 0 || (narrow ? !!c.core : !hidden.includes(c.key)));
 }
 
-/** The grid template shared by the header and every row. */
-export function gridTemplate<T>(
+/** The grid tracks shared by the header and every row. */
+export function gridTracks<T>(
   columns: readonly ShellColumn<T>[],
   { selectable, actions }: { selectable: boolean; actions: string | null },
-): string {
+): string[] {
   const tracks: string[] = [];
   if (selectable) tracks.push(SELECT_WIDTH);
   columns.forEach((c, i) => {
     tracks.push(c.width ?? (i === 0 ? PRIMARY_WIDTH : DEFAULT_WIDTH));
   });
   if (actions) tracks.push(actions);
-  return tracks.join(" ");
+  return tracks;
+}
+
+/** The grid template shared by the header and every row. */
+export function gridTemplate<T>(
+  columns: readonly ShellColumn<T>[],
+  options: { selectable: boolean; actions: string | null },
+): string {
+  return gridTracks(columns, options).join(" ");
+}
+
+const LENGTH = /^-?\d*\.?\d+(px|rem|em|ch|vw|vh)$/;
+
+/** The narrowest a track gets: the first argument of `minmax()`, a fixed length, else 0. */
+export function trackMinimum(track: string): string {
+  const t = track.trim();
+  const minmax = /^minmax\(\s*([^,]+?)\s*,/.exec(t);
+  const min = minmax ? (minmax[1] as string) : t;
+  return LENGTH.test(min) ? min : "0px";
+}
+
+/** Row gap (`gap-3`) and horizontal padding (`px-2` on both sides) of every row. */
+const ROW_GAP = 0.75;
+const ROW_PADDING = 1;
+
+/**
+ * The narrowest the table can be before its columns overlap: every track's minimum plus the gaps
+ * and the row padding. Wider containers stretch it; narrower ones scroll.
+ */
+export function tableMinWidth(tracks: readonly string[]): string {
+  const gaps = Math.max(0, tracks.length - 1) * ROW_GAP + ROW_PADDING;
+  return `calc(${[...tracks.map(trackMinimum), `${gaps}rem`].join(" + ")})`;
 }
 
 /** Columns a user can show or hide. */

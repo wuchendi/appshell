@@ -142,7 +142,7 @@
       "type": "registry:block",
       "title": "App shell: collection table",
       "description": "<CollectionTable>: a column list with a sticky header (select all, sortable columns), 36px rows that open on click or Enter, J/K navigation, a right-click row menu, hover actions and narrow-screen core columns; <BatchBar> for the selection and <ColumnsSection> for the display menu's column switches.",
-      "dependencies": ["cn", "lucide-react"],
+      "dependencies": ["@base-ui/react", "cn", "lucide-react"],
       "registryDependencies": [
         "button",
         "checkbox",

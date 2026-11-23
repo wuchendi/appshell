@@ -1,4 +1,5 @@
 import { useNavigate, useParams } from "@tanstack/react-router";
+import { cn } from "cn";
 import { Boxes, ChevronDown, ChevronUp, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -27,6 +28,7 @@ import { fetchItemsPage, ITEMS, STATUSES } from "./data";
 import { useDemoStore } from "./store";
 
 export function OverviewPage() {
+  const { rows, pager } = useCollectionPage(ITEMS, { pageSize: 10 });
   return (
     <div className="space-y-4">
       <PageHeader title="Overview" />
@@ -34,37 +36,80 @@ export function OverviewPage() {
         The shell around this page comes from the registry: rail, content card, resizable space
         panels, one-row headers and the list menus. Try Cmd/Ctrl+K, Cmd/Ctrl+B and C.
       </p>
+      {/* A normal (non-fill) page: the table sits in a card inside a grid and scrolls sideways
+          on its own, without widening the card. */}
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_14rem]">
+        <section data-testid="recent-card" className="rounded-lg border">
+          <h2 className="px-3 pt-3 pb-1 text-sm font-medium">Recent items</h2>
+          <CollectionTable
+            label="Recent items"
+            columns={COLUMNS}
+            rows={rows}
+            getRowId={i => i.id}
+          />
+          <CollectionPager {...pager} />
+        </section>
+        <aside className="rounded-lg border p-3 text-sm text-muted-foreground">
+          A side card in the same grid.
+        </aside>
+      </div>
+      {Array.from({ length: 12 }, (_, i) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: static filler
+        <p key={i} className="text-sm text-muted-foreground">
+          {`Filler ${i + 1}: the page is long enough to scroll, so the table header sticks under the page header.`}
+        </p>
+      ))}
     </div>
   );
 }
+
+const muted = "text-xs text-muted-foreground";
 
 const COLUMNS: ShellColumn<Item>[] = [
   {
     key: "name",
     header: "Name",
     sortKey: "name",
-    cell: i => <span className="truncate font-medium">{i.name}</span>,
+    cell: i => <span className="block truncate font-medium">{i.name}</span>,
   },
   {
     key: "status",
     header: "Status",
     width: "6rem",
     core: true,
-    cell: i => <span className="text-xs text-muted-foreground">{i.status}</span>,
+    cell: i => <span className={muted}>{i.status}</span>,
+  },
+  { key: "owner", header: "Owner", width: "6rem", cell: i => i.owner },
+  // A long value in a narrow track: plain text cells end with an ellipsis.
+  { key: "email", header: "Email", cell: i => i.email },
+  { key: "region", header: "Region", width: "7rem", cell: i => i.region },
+  { key: "plan", header: "Plan", width: "5rem", cell: i => i.plan },
+  {
+    key: "source",
+    header: "Source",
+    width: "8rem",
+    // Two lines: the row grows to fit.
+    cell: i => (
+      <span className="flex min-w-0 flex-col">
+        <span className="truncate">{i.source}</span>
+        <span className={cn(muted, "truncate")}>{`${i.imported} days ago`}</span>
+      </span>
+    ),
   },
   {
-    key: "owner",
-    header: "Owner",
-    width: "6rem",
-    cell: i => <span className="text-xs text-muted-foreground">{i.owner}</span>,
+    key: "created",
+    header: "Created",
+    align: "end",
+    cell: i => <span className={cn(muted, "tabular-nums")}>{i.created}</span>,
   },
   {
     key: "updated",
     header: "Updated",
     align: "end",
     sortKey: "updated",
-    cell: i => <span className="text-xs text-muted-foreground tabular-nums">{i.updated}</span>,
+    cell: i => <span className={cn(muted, "tabular-nums")}>{i.updated}</span>,
   },
+  { key: "id", header: "ID", width: "4rem", align: "end", cell: i => `#${i.id}` },
 ];
 
 function toggled(prev: Set<string>, id: string, on: boolean): Set<string> {
