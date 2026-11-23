@@ -1,9 +1,18 @@
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { cn } from "cn";
-import { Boxes, ChevronDown, ChevronUp, Plus } from "lucide-react";
+import { Boxes, ChevronDown, ChevronUp, Hash, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ContextMenuItem } from "@/components/ui/context-menu";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { DropdownMenuRadioGroup, DropdownMenuRadioItem } from "@/components/ui/dropdown-menu";
 import { BatchBar, BatchBarSeparator } from "@/shell/collection/batch-bar";
 import { CollectionPager } from "@/shell/collection/collection-pager";
@@ -109,8 +118,37 @@ const COLUMNS: ShellColumn<Item>[] = [
     sortKey: "updated",
     cell: i => <span className={cn(muted, "tabular-nums")}>{i.updated}</span>,
   },
-  { key: "id", header: "ID", width: "4rem", align: "end", cell: i => `#${i.id}` },
+  {
+    key: "id",
+    header: <Hash aria-label="ID" className="size-3.5" />,
+    label: "ID",
+    width: "4rem",
+    align: "end",
+    cell: i => `#${i.id}`,
+  },
 ];
+
+/** A row action whose confirm dialog renders inside the row (its clicks must not open the row). */
+function DeleteAction({ item }: { item: Item }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <IconButton label="Delete" icon={Trash2} onClick={() => setOpen(true)} />
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete {item.name}?</DialogTitle>
+            <DialogDescription>This is a demo; nothing is deleted.</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose render={<Button variant="outline" />}>Cancel</DialogClose>
+            <DialogClose render={<Button variant="destructive" />}>Delete</DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
 
 function toggled(prev: Set<string>, id: string, on: boolean): Set<string> {
   const next = new Set(prev);
@@ -238,6 +276,7 @@ export function ItemsPage() {
               columns={COLUMNS}
               rows={page}
               getRowId={i => i.id}
+              getRowLabel={i => i.name}
               hiddenColumns={hidden}
               sort={{ key: sortKey, onSort: setSortKey }}
               selection={{
@@ -258,11 +297,14 @@ export function ItemsPage() {
                 </ContextMenuItem>
               )}
               rowActions={i => (
-                <IconButton
-                  label={expanded.has(i.id) ? "Hide details" : "Show details"}
-                  icon={expanded.has(i.id) ? ChevronUp : ChevronDown}
-                  onClick={() => setExpanded(prev => toggled(prev, i.id, !prev.has(i.id)))}
-                />
+                <>
+                  <IconButton
+                    label={expanded.has(i.id) ? "Hide details" : "Show details"}
+                    icon={expanded.has(i.id) ? ChevronUp : ChevronDown}
+                    onClick={() => setExpanded(prev => toggled(prev, i.id, !prev.has(i.id)))}
+                  />
+                  <DeleteAction item={i} />
+                </>
               )}
               renderSubRow={i => (expanded.has(i.id) ? <ItemDetails item={i} /> : null)}
             />

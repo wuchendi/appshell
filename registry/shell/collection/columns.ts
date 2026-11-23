@@ -4,6 +4,8 @@ import type { ReactNode } from "react";
 export interface ShellColumn<T> {
   key: string;
   header: ReactNode;
+  /** Name in the display menu's column switches; defaults to a text `header`, then `key`. */
+  label?: string | undefined;
   /** CSS grid track. Primary defaults to `minmax(14rem,1fr)`, the others to `6.5rem`. */
   width?: string;
   align?: "start" | "end";
@@ -81,5 +83,29 @@ export function hideableColumns<T>(columns: readonly ShellColumn<T>[]): ShellCol
 }
 
 /** Elements inside a row that handle their own clicks (and so do not open the row). */
-export const ROW_INTERACTIVE =
-  'a, button, input, label, [role="checkbox"], [role="menuitem"], [data-slot="popover-content"]';
+const ROW_INTERACTIVE = 'a, button, input, label, [role="checkbox"], [role="menuitem"]';
+
+/**
+ * Whether a click opens the row: its target is inside the row's own DOM (React also bubbles clicks
+ * from portaled menus and dialogs) and not on an element with its own click.
+ */
+export function opensRow(row: Element, target: EventTarget | null): boolean {
+  return target instanceof Element && row.contains(target) && !target.closest(ROW_INTERACTIVE);
+}
+
+/** A row's accessible name: `getRowLabel`, else a text primary cell, else the id. */
+export function rowLabel<T>(
+  row: T,
+  id: string,
+  columns: readonly ShellColumn<T>[],
+  getRowLabel: ((row: T) => string) | undefined,
+): string {
+  if (getRowLabel) return getRowLabel(row);
+  const primary = columns[0]?.cell(row);
+  return typeof primary === "string" || typeof primary === "number" ? String(primary) : id;
+}
+
+/** A column's name in the display menu. */
+export function columnLabel<T>(column: ShellColumn<T>): string {
+  return column.label ?? (typeof column.header === "string" ? column.header : column.key);
+}

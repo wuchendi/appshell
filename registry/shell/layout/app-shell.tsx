@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { isTypingTarget } from "@/shell/core/is-typing";
+import { isBareKeyBlocked } from "@/shell/core/is-typing";
 import type { ShellLabels } from "@/shell/core/labels";
 import { shellLabelsEn } from "@/shell/core/labels";
 import { ShellLabelsContext } from "@/shell/core/labels-context";
@@ -19,7 +19,7 @@ import type { ShellSpace } from "@/shell/core/spaces";
 import { spaceFor } from "@/shell/core/spaces";
 import { useIsMobile } from "@/shell/core/use-is-mobile";
 import { NavigationProgress } from "@/shell/layout/navigation-progress";
-import { PAGE_GUTTER, ShellPageContext } from "@/shell/layout/page-context";
+import { PAGE_GUTTER, PAGE_TOP, ShellPageContext } from "@/shell/layout/page-context";
 import type { ShellNewAction } from "@/shell/layout/rail";
 import { Rail } from "@/shell/layout/rail";
 import { useShellPathname } from "@/shell/router";
@@ -155,7 +155,7 @@ export function AppShell({
         }
         return;
       }
-      if (key === "c" && newAction && !isTypingTarget(e.target)) {
+      if (key === "c" && newAction && !isBareKeyBlocked(e)) {
         e.preventDefault();
         newAction.onSelect();
       }
@@ -172,6 +172,7 @@ export function AppShell({
     account,
     newAction,
     onSearch,
+    hasPanel: (key: string) => !!panels[key],
   };
 
   return (
@@ -273,7 +274,7 @@ export function AppShell({
                   <main className="flex h-full min-h-0 min-w-0 flex-col">
                     {banner}
                     <ScrollArea className="min-h-0 flex-1">
-                      <div className={`${PAGE_GUTTER} ${FILL_PAGE} pt-4 pb-6 md:pt-5`}>
+                      <div className={`${PAGE_GUTTER} ${PAGE_TOP} ${FILL_PAGE} pb-6`}>
                         <ShellPageContext
                           value={{
                             ...(space?.icon ? { icon: space.icon } : {}),

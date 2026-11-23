@@ -49,6 +49,8 @@ export function SearchDialog({
   const navigate = useShellNavigate();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<ShellSearchResult[]>([]);
+  const [pending, setPending] = useState(false);
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     if (!open) setQuery("");
@@ -56,15 +58,27 @@ export function SearchDialog({
 
   useEffect(() => {
     const q = query.trim();
+    setFailed(false);
     if (!search || !q) {
       setResults([]);
+      setPending(false);
       return;
     }
+    setPending(true);
     const controller = new AbortController();
     const id = setTimeout(() => {
       search(q, controller.signal)
-        .then(r => setResults(r.slice(0, limit)))
-        .catch(() => {});
+        .then(r => {
+          if (!controller.signal.aborted) setResults(r.slice(0, limit));
+        })
+        .catch(() => {
+          if (controller.signal.aborted) return;
+          setResults([]);
+          setFailed(true);
+        })
+        .finally(() => {
+          if (!controller.signal.aborted) setPending(false);
+        });
     }, 200);
     return () => {
       clearTimeout(id);
@@ -92,7 +106,13 @@ export function SearchDialog({
           placeholder={labels.searchPlaceholder}
         />
         <CommandList>
-          <CommandEmpty>{labels.searchEmpty}</CommandEmpty>
+          {results.length === 0 && (pending || failed) ? (
+            <div role="status" className="py-3 text-center text-sm text-muted-foreground">
+              {pending ? labels.loading : labels.searchFailed}
+            </div>
+          ) : (
+            <CommandEmpty>{labels.searchEmpty}</CommandEmpty>
+          )}
           {results.length > 0 && (
             <CommandGroup heading={resultsLabel}>
               {results.map(r => {

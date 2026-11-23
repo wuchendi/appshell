@@ -2,7 +2,7 @@
 
 import type { RefObject } from "react";
 import { useEffect } from "react";
-import { isTypingTarget } from "@/shell/core/is-typing";
+import { isBareKeyBlocked } from "@/shell/core/is-typing";
 
 /** Rows are the elements carrying this attribute (and a `tabIndex`). */
 export const SHELL_ROW_ATTR = "data-shell-row";
@@ -17,7 +17,7 @@ export function useRowNavigation(container: RefObject<HTMLElement | null>): void
       if (e.metaKey || e.ctrlKey || e.altKey || e.defaultPrevented) return;
       const step =
         e.key === "j" || e.key === "ArrowDown" ? 1 : e.key === "k" || e.key === "ArrowUp" ? -1 : 0;
-      if (!step || isTypingTarget(e.target)) return;
+      if (!step || isBareKeyBlocked(e)) return;
       const root = container.current;
       if (!root) return;
       const rows = Array.from(root.querySelectorAll<HTMLElement>(`[${SHELL_ROW_ATTR}]`));

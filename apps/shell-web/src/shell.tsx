@@ -38,8 +38,11 @@ export function Shell() {
   const { lang, setLang, setQuery } = useDemoStore();
   const [searchOpen, setSearchOpen] = useState(false);
   const search = useCallback(
-    async (q: string): Promise<ShellSearchResult[]> =>
-      ITEMS.filter(i => i.name.toLowerCase().includes(q.toLowerCase())).map(i => ({
+    async (q: string): Promise<ShellSearchResult[]> => {
+      // Slow enough to show the pending state; "error" shows the failed state.
+      await new Promise(resolve => setTimeout(resolve, 400));
+      if (q === "error") throw new Error("demo search failure");
+      return ITEMS.filter(i => i.name.toLowerCase().includes(q.toLowerCase())).map(i => ({
         id: i.id,
         label: i.name,
         detail: i.owner,
@@ -48,7 +51,8 @@ export function Shell() {
           setQuery(i.name);
           void navigate({ to: "/items" });
         },
-      })),
+      }));
+    },
     [navigate, setQuery],
   );
   return (

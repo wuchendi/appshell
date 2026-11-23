@@ -1,7 +1,7 @@
 "use client";
 
 import type { ShellColumn } from "@/shell/collection/columns";
-import { hideableColumns } from "@/shell/collection/columns";
+import { columnLabel, hideableColumns } from "@/shell/collection/columns";
 import { useShellLabels } from "@/shell/core/labels-context";
 import { MenuSection, MenuSwitch } from "@/shell/menus/menus";
 
@@ -21,7 +21,7 @@ export function ColumnsSection<T>({
       {hideableColumns(columns).map(c => (
         <MenuSwitch
           key={c.key}
-          label={typeof c.header === "string" ? c.header : c.key}
+          label={columnLabel(c)}
           checked={!hidden.includes(c.key)}
           onChange={() => onToggle(c.key)}
         />
