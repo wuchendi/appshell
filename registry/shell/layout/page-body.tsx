@@ -1,3 +1,5 @@
+"use client";
+
 import { cn } from "cn";
 import type { ReactNode } from "react";
 import { ShellPageFillContext } from "@/shell/core/page-fill";

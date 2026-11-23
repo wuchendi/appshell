@@ -1,3 +1,5 @@
+"use client";
+
 import { cn } from "cn";
 import { Filter, Search, SlidersHorizontal, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -6,7 +8,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Switch } from "@/components/ui/switch";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { isTypingTarget } from "@/shell/core/is-typing";
-import { formatLabel, useShellLabels } from "@/shell/core/labels";
+import { formatLabel } from "@/shell/core/labels";
+import { useShellLabels } from "@/shell/core/labels-context";
 
 // A chip in a menu's toggle group: pressed reads as the primary tint.
 const CHIP =

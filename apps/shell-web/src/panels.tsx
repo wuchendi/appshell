@@ -26,7 +26,7 @@ export function ItemsPanel() {
     <PanelFrame title="Items">
       <PanelSection label="Views">
         <PanelRow
-          to="/items"
+          href="/items"
           icon={List}
           count={ITEMS.length}
           active={pathname === "/items" && status === "all"}
@@ -37,7 +37,7 @@ export function ItemsPanel() {
         {STATUSES.map(s => (
           <PanelRow
             key={s}
-            to="/items"
+            href="/items"
             icon={ICONS[s]}
             count={ITEMS.filter(i => i.status === s).length}
             active={pathname === "/items" && status === s}
@@ -48,7 +48,7 @@ export function ItemsPanel() {
         ))}
       </PanelSection>
       <PanelSection label="Examples">
-        <PanelRow to="/items/server" icon={Server} active={pathname === "/items/server"}>
+        <PanelRow href="/items/server" icon={Server} active={pathname === "/items/server"}>
           Server paged
         </PanelRow>
       </PanelSection>
@@ -71,12 +71,12 @@ export function SettingsPanel() {
   return (
     <PanelFrame title="Settings">
       <PanelSection label="Account">
-        <PanelRow to="/settings" icon={SlidersHorizontal} active={pathname === "/settings"}>
+        <PanelRow href="/settings" icon={SlidersHorizontal} active={pathname === "/settings"}>
           General
         </PanelRow>
       </PanelSection>
       <PanelSection label="Workspace">
-        <PanelRow to="/settings/members" icon={Users} active={pathname === "/settings/members"}>
+        <PanelRow href="/settings/members" icon={Users} active={pathname === "/settings/members"}>
           Members
         </PanelRow>
       </PanelSection>

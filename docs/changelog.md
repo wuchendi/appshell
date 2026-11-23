@@ -1,5 +1,40 @@
 # Changelog
 
+## 2026-11-23 — v0.4.0
+
+Next.js support (App Router, server rendered) next to TanStack Router. Breaking, no compatibility
+layer (product phase).
+
+- **Breaking**: routing goes through `@/shell/router`, installed by exactly one of the new items
+  `shell-router-tanstack` / `shell-router-next` (`ShellLink`, `useShellPathname`,
+  `useShellNavigate`, `useShellNavigating`). `shell-layout` and `shell-search` no longer depend on
+  `@tanstack/react-router`.
+- **Breaking**: `PanelRow` / `PanelAllRow` take `href` (a full app path, query included) instead
+  of `to`; `params` and `search` are gone.
+- **Breaking**: the panel state lives in the `appshell` cookie (`0`/`1`, optionally `:<width %>`)
+  instead of localStorage, so a server render matches the client. `AppShell` takes
+  `prefs={readShellPrefs(cookies)}`; without it the shell reads `document.cookie`. New pure
+  `core/prefs.ts` (`readShellPrefs`, `shellPrefsCookie`, `SHELL_PREFS_COOKIE`). Earlier
+  localStorage values are ignored.
+- **Breaking**: `useShellPanelStore` (zustand) is replaced by `useShellPanel()` over a context that
+  `AppShell` provides; `shell-core` no longer depends on `zustand`. `layoutId` is removed.
+- **Breaking**: `useShellLabels` moved to `core/labels-context.ts` (`ShellLabelsContext`);
+  `core/labels.ts` is plain data a Server Component can import.
+- Every file with hooks, context or components starts with `"use client"`.
+- `useIsMobile` uses `useSyncExternalStore` (false on the server). Below `md` the inline panel is
+  hidden by CSS too, so a server render on a phone shows the page full width before hydration.
+- Install targets are `shell/...`: shadcn puts them under `src/` only when the host has one.
+- `registry:smoke` also installs into a Next.js App Router host without `src/` (`rsc: true`),
+  typechecks and runs `next build`; `next` is a root dev dependency so `bun run check`
+  typechecks the Next adapter.
+- Pitfalls: rrp server-renders a panel from its own `defaultSize` and treats a `0` in the group's
+  `defaultLayout` as missing, so the folded state is `defaultSize={0}` on the panel. rrp puts
+  `className` on an inner element; hiding the panel needs a selector on the group
+  (`[&>#panel]`). Next's `cookies().toString()` URL-encodes values (`%3A`). Next and TanStack
+  link props reject an explicit `undefined` under `exactOptionalPropertyTypes`, hence the casts in
+  the adapters. Tailwind v4 skips git-ignored paths, so the scratch hosts under `.tmp/` declare
+  `@source`.
+
 ## 2026-11-23 — v0.3.1
 
 Requested by azctl (`docs/appshell-requirements.md`, R6–R8). No host changes needed.

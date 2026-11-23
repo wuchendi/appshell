@@ -1,5 +1,5 @@
-import type { LinkProps } from "@tanstack/react-router";
-import { Link, useNavigate } from "@tanstack/react-router";
+"use client";
+
 import { cn } from "cn";
 import type { LucideIcon } from "lucide-react";
 import { ChevronDown } from "lucide-react";
@@ -7,12 +7,10 @@ import type { ReactElement, ReactNode } from "react";
 import { useState } from "react";
 import { ContextMenu, ContextMenuContent, ContextMenuTrigger } from "@/components/ui/context-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { ShellLink, useShellNavigate } from "@/shell/router";
 
 const ROW_CLASS =
   "flex min-h-8 w-full items-center gap-2.5 rounded-[6px] px-3 py-1.5 text-left text-[13px] text-foreground/80 transition-colors outline-none hover:bg-foreground/[0.04] hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring aria-[current=page]:bg-foreground/[0.06] aria-[current=page]:text-foreground [&_svg]:size-4 [&_svg]:shrink-0";
-
-/** The router's own fuzzy match would mark parent rows active too. */
-const EXACT = { exact: true };
 
 export type ShellDotTone = "success" | "warning" | "danger" | "info" | "progress" | "muted";
 
@@ -96,14 +94,12 @@ function withMenu(row: ReactElement, menu: ReactNode) {
 }
 
 /**
- * One row: a link (`to`), an action (`onClick`, then opens `to` if given), or plain text.
+ * One row: a link (`href`), an action (`onClick`, then opens `href` if given), or plain text.
  * Action rows are buttons because they share one path, and the router would mark every link to
  * the current path active.
  */
 export function PanelRow({
-  to,
-  params,
-  search,
+  href,
   onClick,
   menu,
   active = false,
@@ -114,9 +110,7 @@ export function PanelRow({
   title,
   children,
 }: {
-  to?: string;
-  params?: LinkProps["params"];
-  search?: LinkProps["search"];
+  href?: string;
   onClick?: () => void;
   active?: boolean;
   icon?: LucideIcon;
@@ -129,7 +123,7 @@ export function PanelRow({
   menu?: ReactNode;
   children: ReactNode;
 }) {
-  const navigate = useNavigate();
+  const navigate = useShellNavigate();
   const body = (
     <>
       {dot ? (
@@ -160,25 +154,17 @@ export function PanelRow({
           title={title}
           onClick={() => {
             onClick();
-            if (to) void navigate({ to: to as LinkProps["to"], params: params as never });
+            if (href) navigate(href);
           }}
           className={ROW_CLASS}
         >
           {body}
         </button>
-      ) : to ? (
+      ) : href ? (
         withMenu(
-          <Link
-            to={to as LinkProps["to"]}
-            params={params as never}
-            search={search as never}
-            activeOptions={EXACT}
-            aria-current={current}
-            title={title}
-            className={ROW_CLASS}
-          >
+          <ShellLink href={href} aria-current={current} title={title} className={ROW_CLASS}>
             {body}
-          </Link>,
+          </ShellLink>,
           menu,
         )
       ) : (
@@ -192,25 +178,24 @@ export function PanelRow({
 
 /** Muted closing row that opens the full list. */
 export function PanelAllRow({
-  to,
+  href,
   label,
   active = false,
 }: {
-  to: string;
+  href: string;
   label: string;
   active?: boolean;
 }) {
   return (
     <ul className="mt-3">
       <li>
-        <Link
-          to={to as LinkProps["to"]}
-          activeOptions={EXACT}
+        <ShellLink
+          href={href}
           aria-current={active ? "page" : undefined}
           className={cn(ROW_CLASS, "pl-[2.375rem] text-[12px] text-muted-foreground")}
         >
           {label}
-        </Link>
+        </ShellLink>
       </li>
     </ul>
   );

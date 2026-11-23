@@ -1,3 +1,5 @@
+"use client";
+
 import { cn } from "cn";
 import { ChevronDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,7 +12,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { PAGE_SIZES, pageCount } from "@/shell/collection/pager";
 import type { ShellPagerState } from "@/shell/collection/use-collection-page";
-import { formatLabel, useShellLabels } from "@/shell/core/labels";
+import { formatLabel } from "@/shell/core/labels";
+import { useShellLabels } from "@/shell/core/labels-context";
 
 export interface CollectionPagerProps extends ShellPagerState {
   /** Selected rows; the count line reads "selected / total" while it is above 0. */

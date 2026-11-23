@@ -1,3 +1,5 @@
+"use client";
+
 import { createContext, use } from "react";
 
 /** True inside `<PageBody fill>`: the body has a definite height and children scroll on their own. */

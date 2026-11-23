@@ -1,13 +1,13 @@
-import { useRouterState } from "@tanstack/react-router";
+"use client";
+
 import { useEffect, useState } from "react";
-import { useShellLabels } from "@/shell/core/labels";
+import { useShellLabels } from "@/shell/core/labels-context";
+import { useShellNavigating } from "@/shell/router";
 
 /** A thin bar along the top of the content card while a navigation is pending, after a short delay. */
 export function NavigationProgress() {
   const labels = useShellLabels();
-  const loading = useRouterState({
-    select: s => s.isLoading,
-  });
+  const loading = useShellNavigating();
   const [visible, setVisible] = useState(false);
   useEffect(() => {
     if (!loading) {

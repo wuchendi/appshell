@@ -1,17 +1,16 @@
-import type { LinkProps } from "@tanstack/react-router";
-import { Link, useRouterState } from "@tanstack/react-router";
+"use client";
+
 import { cn } from "cn";
 import { Search, SquarePen } from "lucide-react";
 import type { ReactNode } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { MOD_KEY } from "@/shell/core/keys";
-import { useShellLabels } from "@/shell/core/labels";
-import { useShellPanelStore } from "@/shell/core/panel-store";
+import { useShellLabels } from "@/shell/core/labels-context";
+import { useShellPanel } from "@/shell/core/panel-state";
 import type { ShellSpace } from "@/shell/core/spaces";
 import { isActivePath } from "@/shell/core/spaces";
 import { IconButton } from "@/shell/layout/icon-button";
-
-const EXACT = { exact: true };
+import { ShellLink, useShellPathname } from "@/shell/router";
 
 const ENTRY_BASE =
   "shrink-0 rounded-[6px] text-muted-foreground transition-colors outline-none hover:bg-foreground/5 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring aria-[current=page]:bg-foreground/[0.07] aria-[current=page]:text-foreground";
@@ -50,19 +49,16 @@ export function Rail({
   className?: string;
 }) {
   const labels = useShellLabels();
-  const pathname = useRouterState({
-    select: s => s.location.pathname,
-  });
-  const togglePanel = useShellPanelStore(s => s.toggle);
+  const pathname = useShellPathname();
+  const togglePanel = useShellPanel().toggle;
   const entry = (space: ShellSpace) => {
     const iconOnly = !!space.footer;
     const Icon = space.icon;
     const active = isActivePath(pathname, space);
     return (
-      <Link
+      <ShellLink
         key={space.key}
-        to={space.href as LinkProps["to"]}
-        activeOptions={EXACT}
+        href={space.href}
         aria-current={active ? "page" : undefined}
         aria-label={iconOnly ? space.label : undefined}
         title={iconOnly ? space.label : undefined}
@@ -78,7 +74,7 @@ export function Rail({
       >
         <Icon aria-hidden="true" />
         {!iconOnly && <span className="max-w-full truncate px-0.5">{space.label}</span>}
-      </Link>
+      </ShellLink>
     );
   };
   return (
@@ -86,14 +82,14 @@ export function Rail({
       data-slot="app-rail"
       className={cn("flex w-[60px] shrink-0 flex-col items-center gap-0.5 py-2.5", className)}
     >
-      <Link
-        to={homeHref as LinkProps["to"]}
+      <ShellLink
+        href={homeHref}
         aria-label={logoLabel}
         onClick={onNavigate}
         className="mb-1.5 grid size-8 shrink-0 place-items-center rounded-[6px] bg-primary text-primary-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
         {logo}
-      </Link>
+      </ShellLink>
       {newAction && (
         <IconButton
           label={newAction.label}
