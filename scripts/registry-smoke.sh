@@ -151,6 +151,13 @@ TSX
 check_rewrites src/shell
 bunx tsc --noEmit -p tsconfig.json
 bunx vite build >/dev/null
+# Re-adding must not overwrite a UI component the host has edited (answer "no" to shadcn's prompt).
+echo '// host edit' >> src/shared/components/ui/popover.tsx
+(yes n || true) | bunx shadcn add -y @cdlab/shell-menus >/dev/null
+if ! grep -q '// host edit' src/shared/components/ui/popover.tsx; then
+  echo "shadcn add overwrote an edited UI component" >&2
+  exit 1
+fi
 echo "registry smoke (vite): OK"
 }
 

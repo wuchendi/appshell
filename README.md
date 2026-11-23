@@ -34,6 +34,11 @@ Files land in `shell/**` — under `src/` when the host has one — and import e
 `shell/router.tsx`; `shell-layout` and `shell-search` import it and fail to compile without one.
 `shell-layout` adds the progress-bar keyframes to the host stylesheet.
 
+In a monorepo whose shadcn components live in a workspace package, the app's `components.json`
+maps `ui` / `utils` to that package (e.g. `"ui": "@acme/ui/components"`); `shadcn add` rewrites
+the shell's `@/components/ui/*` imports to it. `cn` is the npm package `cn`, added to the app's
+dependencies and never rewritten, whatever `utils` points at.
+
 The canvas behind the rail and the content card is `var(--shell-canvas, var(--color-muted))`. Set
 `--shell-canvas` in the host theme (light and dark, however the host switches them) to pick
 another color:
@@ -131,8 +136,12 @@ Server Component can import.
   pages; folding never remounts the page. Whether the panel is open and its width (one for every
   space) live in the `appshell` cookie (`readShellPrefs` / `shellPrefsCookie`); without a `prefs`
   prop the shell reads `document.cookie`. `useShellPanel()` gives the open state and its setters.
+  A rail entry navigates to its space's `href`; only when that page is already shown and the space
+  has a panel does the click fold or unfold the panel instead. From a detail page below `href` the
+  entry goes back to `href`, and a space without a panel always navigates.
 - **Shortcuts**: Cmd/Ctrl+B folds the panel, Cmd/Ctrl+K calls `onSearch`, a bare `C` runs
-  `newAction`. Clicking the current rail entry or the panel edge folds the panel too.
+  `newAction`. The panel edge folds the panel too. Bare keys (`C`, `/` in `HeaderSearch`, J/K)
+  do nothing while typing, during IME composition or with focus in a modal dialog.
 - **Labels**: every visible string comes from `labels` (`ShellLabels`). `shellLabelsEn` and
   `shellLabelsZh` ship with the shell; hosts on i18n build the object from their translations.
 - **Rows**: give list rows `data-shell-row` and `tabIndex={0}`, then `useRowNavigation(listRef)`
@@ -144,8 +153,11 @@ Server Component can import.
   than the window still scrolls with the page. It is per page, so a detail page in the same space
   keeps the normal layout.
 - **Tables**: describe columns as `ShellColumn<T>` (the first is the primary column; `width` is a
-  grid track; `sortKey` makes the header sort; `core` keeps it on narrow screens) and render
-  `<CollectionTable>`; put `<ColumnsSection>` in the display menu and `<BatchBar>` after the list.
+  grid track; `sortKey` makes the header sort; `core` keeps it on narrow screens; `label` names a
+  column whose `header` is not text in the display menu) and render `<CollectionTable>`; put
+  `<ColumnsSection>` in the display menu and `<BatchBar>` after the list. Row checkboxes are named
+  "Select {name}" from `getRowLabel` (else a text primary cell, else the id). A row opens on clicks
+  in its own DOM only, so menus and dialogs rendered from `rowActions` / `renderSubRow` are safe.
   `renderSubRow={row => node | null}` adds a full-width block under a row (you own the expanded
   state; J/K skips it), `loading` shows skeleton rows and `empty` replaces the rows. Cells clip
   (plain text and numbers end with an ellipsis), rows grow past 36px for multi-line cells, and a
@@ -163,9 +175,17 @@ Server Component can import.
   bar follows navigations started by the shell — rail, panel rows, search — and by host code
   using `ShellLink` / `useShellNavigate`; plain `next/link` elsewhere does not drive it.
 - **Search**: render `<SearchDialog>` yourself (open state from `onSearch`) and pass
-  `search={(query, signal) => Promise<ShellSearchResult[]>}`.
+  `search={(query, signal) => Promise<ShellSearchResult[]>}`. While it is pending the dialog
+  says so; a rejected search clears the results and shows `labels.searchFailed`.
+
+## Upgrade
 
 Items are copied source, so upgrading a host means re-running `shadcn add` and reviewing the diff.
+Without `--overwrite`, shadcn skips identical files and asks before replacing each file that
+differs — shell files and UI components alike, even with `-y`. Answer yes for `shell/**` and no
+for UI components you have edited. Without a terminal (CI) it stops at the first question and
+writes nothing. With `--overwrite` it replaces everything, edited UI components included: commit
+first, then restore those (`git checkout -- packages/ui` or wherever they live).
 
 ## Develop
 

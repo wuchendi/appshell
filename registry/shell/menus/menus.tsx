@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Switch } from "@/components/ui/switch";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { isTypingTarget } from "@/shell/core/is-typing";
+import { isBareKeyBlocked } from "@/shell/core/is-typing";
 import { formatLabel } from "@/shell/core/labels";
 import { useShellLabels } from "@/shell/core/labels-context";
 
@@ -216,7 +216,7 @@ export function HeaderSearch({
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== "/" || e.metaKey || e.ctrlKey || e.altKey) return;
-      if (e.defaultPrevented || isTypingTarget(e.target)) return;
+      if (e.defaultPrevented || isBareKeyBlocked(e)) return;
       e.preventDefault();
       setOpen(true);
       inputRef.current?.focus();

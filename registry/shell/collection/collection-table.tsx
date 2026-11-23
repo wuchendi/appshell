@@ -12,10 +12,12 @@ import type { ShellColumn } from "@/shell/collection/columns";
 import {
   ACTIONS_WIDTH,
   gridTracks,
-  ROW_INTERACTIVE,
+  opensRow,
+  rowLabel,
   tableMinWidth,
   visibleColumns,
 } from "@/shell/collection/columns";
+import { formatLabel } from "@/shell/core/labels";
 import { useShellLabels } from "@/shell/core/labels-context";
 import { usePageFill } from "@/shell/core/page-fill";
 import { useIsMobile } from "@/shell/core/use-is-mobile";
@@ -26,6 +28,8 @@ export interface CollectionTableProps<T> {
   columns: ShellColumn<T>[];
   rows: T[];
   getRowId: (row: T) => string;
+  /** The row's name for its checkbox; defaults to a text primary cell, then the id. */
+  getRowLabel?: ((row: T) => string) | undefined;
   hiddenColumns?: string[];
   sort?: { key: string; direction?: "asc" | "desc"; onSort: (key: string) => void };
   selection?:
@@ -88,6 +92,7 @@ export function CollectionTable<T>({
   columns,
   rows,
   getRowId,
+  getRowLabel,
   hiddenColumns = [],
   sort,
   selection,
@@ -120,8 +125,7 @@ export function CollectionTable<T>({
   const allSelected = !!selection && ids.length > 0 && ids.every(id => selection.selected.has(id));
 
   function openFromClick(row: T, e: MouseEvent) {
-    if (!onOpen || (e.target as HTMLElement).closest(ROW_INTERACTIVE)) return;
-    onOpen(row);
+    if (onOpen && opensRow(e.currentTarget, e.target)) onOpen(row);
   }
   function openOnEnter(row: T, e: KeyboardEvent) {
     if (onOpen && e.key === "Enter" && e.target === e.currentTarget) {
@@ -256,7 +260,9 @@ export function CollectionTable<T>({
                         <Checkbox
                           checked={selected}
                           onCheckedChange={v => selection.onToggle(id, v === true)}
-                          aria-label={id}
+                          aria-label={formatLabel(labels.selectRow, {
+                            name: rowLabel(row, id, columns, getRowLabel),
+                          })}
                           className={cn(
                             "transition-opacity",
                             !selected &&

@@ -15,7 +15,12 @@ import { MOD_KEY } from "@/shell/core/keys";
 import { useShellLabels } from "@/shell/core/labels-context";
 import { useShellPanel } from "@/shell/core/panel-state";
 import { IconButton } from "@/shell/layout/icon-button";
-import { PAGE_GUTTER, ShellPageContext } from "@/shell/layout/page-context";
+import {
+  PAGE_GUTTER,
+  PAGE_GUTTER_BLEED,
+  PAGE_TOP_BLEED,
+  ShellPageContext,
+} from "@/shell/layout/page-context";
 
 function SpaceIcon({ icon: Icon }: { icon: LucideIcon }) {
   return <Icon aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />;
@@ -67,8 +72,10 @@ export function PageHeader({
     <header
       data-slot="page-header"
       className={cn(
-        "sticky top-0 z-20 -mx-4 -mt-4 flex h-12 shrink-0 items-center gap-2 border-b bg-background md:-mx-6 md:-mt-5",
+        "sticky top-0 z-20 flex h-12 shrink-0 items-center gap-2 border-b bg-background",
         PAGE_GUTTER,
+        PAGE_GUTTER_BLEED,
+        PAGE_TOP_BLEED,
         className,
       )}
     >

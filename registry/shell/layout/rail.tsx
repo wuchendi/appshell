@@ -8,7 +8,7 @@ import { MOD_KEY } from "@/shell/core/keys";
 import { useShellLabels } from "@/shell/core/labels-context";
 import { useShellPanel } from "@/shell/core/panel-state";
 import type { ShellSpace } from "@/shell/core/spaces";
-import { isActivePath } from "@/shell/core/spaces";
+import { isActivePath, railEntryFolds } from "@/shell/core/spaces";
 import { IconButton } from "@/shell/layout/icon-button";
 import { ShellLink, useShellPathname } from "@/shell/router";
 
@@ -34,6 +34,7 @@ export function Rail({
   account,
   newAction,
   onSearch,
+  hasPanel,
   onNavigate,
   className,
 }: {
@@ -44,6 +45,8 @@ export function Rail({
   account?: ReactNode;
   newAction?: ShellNewAction | undefined;
   onSearch?: (() => void) | undefined;
+  /** Whether a space has a panel; only those fold from the rail. */
+  hasPanel: (key: string) => boolean;
   /** Set in the mobile sheet: entries close it, and the current entry no longer folds the panel. */
   onNavigate?: () => void;
   className?: string;
@@ -63,8 +66,8 @@ export function Rail({
         aria-label={iconOnly ? space.label : undefined}
         title={iconOnly ? space.label : undefined}
         onClick={e => {
-          // On the desktop rail the current space's entry folds its panel.
-          if (active && !onNavigate) {
+          // On the desktop rail, the entry of the space being shown folds its panel.
+          if (!onNavigate && railEntryFolds(pathname, space, hasPanel(space.key))) {
             e.preventDefault();
             togglePanel();
           }

@@ -32,3 +32,15 @@ export function isActivePath(
 export function spaceFor(spaces: readonly ShellSpace[], pathname: string): ShellSpace | undefined {
   return spaces.find(s => isActivePath(pathname, s));
 }
+
+/**
+ * Whether a desktop rail click on the current space folds its panel instead of navigating: only a
+ * space with a panel, on its own `href`. From a detail page the entry goes back to `href`.
+ */
+export function railEntryFolds(
+  pathname: string,
+  space: { href: string },
+  hasPanel: boolean,
+): boolean {
+  return hasPanel && pathname === space.href;
+}

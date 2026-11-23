@@ -1,9 +1,12 @@
 import { describe, expect, it } from "bun:test";
 import type { ShellColumn } from "@/shell/collection/columns";
 import {
+  columnLabel,
   gridTemplate,
   gridTracks,
   hideableColumns,
+  opensRow,
+  rowLabel,
   tableMinWidth,
   trackMinimum,
   visibleColumns,
@@ -105,5 +108,56 @@ describe("tableMinWidth", () => {
 
   it("is just the padding without tracks", () => {
     expect(tableMinWidth([])).toBe("calc(1rem)");
+  });
+});
+
+describe("opensRow", () => {
+  const row = document.createElement("div");
+  row.innerHTML =
+    '<span id="cell">x</span><button id="act">a</button><div role="menuitem" id="mi"></div>';
+  document.body.append(row);
+
+  it("opens from a plain cell", () => {
+    expect(opensRow(row, row.querySelector("#cell"))).toBe(true);
+    expect(opensRow(row, row)).toBe(true);
+  });
+
+  it("ignores interactive elements in the row", () => {
+    expect(opensRow(row, row.querySelector("#act"))).toBe(false);
+    expect(opensRow(row, row.querySelector("#mi"))).toBe(false);
+  });
+
+  it("ignores portaled content outside the row", () => {
+    const portaled = document.createElement("div");
+    document.body.append(portaled);
+    expect(opensRow(row, portaled)).toBe(false);
+    expect(opensRow(row, null)).toBe(false);
+  });
+});
+
+describe("rowLabel", () => {
+  const named: ShellColumn<{ id: string; name: string }>[] = [
+    { key: "name", header: "Name", cell: r => r.name },
+  ];
+  const noded: ShellColumn<{ id: string }>[] = [{ key: "n", header: "N", cell: () => null }];
+
+  it("prefers getRowLabel", () => {
+    expect(rowLabel({ id: "1", name: "A" }, "1", named, r => `#${r.name}`)).toBe("#A");
+  });
+
+  it("falls back to a text primary cell, then the id", () => {
+    expect(rowLabel({ id: "1", name: "Alpha" }, "1", named, undefined)).toBe("Alpha");
+    expect(rowLabel({ id: "7" }, "7", noded, undefined)).toBe("7");
+    expect(rowLabel({ id: "7" }, "7", [{ key: "n", header: "N", cell: () => 42 }], undefined)).toBe(
+      "42",
+    );
+  });
+});
+
+describe("columnLabel", () => {
+  it("uses label, then a text header, then the key", () => {
+    expect(columnLabel({ key: "k", header: "H", label: "L", cell: () => null })).toBe("L");
+    expect(columnLabel({ key: "k", header: "H", cell: () => null })).toBe("H");
+    expect(columnLabel({ key: "k", header: null, cell: () => null })).toBe("k");
   });
 });

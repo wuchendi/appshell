@@ -5,6 +5,7 @@ export interface ShellLabels {
   search: string;
   searchPlaceholder: string;
   searchEmpty: string;
+  searchFailed: string;
   goTo: string;
   filter: string;
   /** `{count}` is replaced with the number of active filters. */
@@ -17,6 +18,8 @@ export interface ShellLabels {
   selectedCount: string;
   selectAll: string;
   deselectAll: string;
+  /** `{name}` is replaced with the row's name. */
+  selectRow: string;
   clearSelection: string;
   columns: string;
   /** `{total}` is replaced with the number of rows. */
@@ -39,6 +42,7 @@ export const shellLabelsEn: ShellLabels = {
   search: "Search",
   searchPlaceholder: "Search or jump to…",
   searchEmpty: "Nothing found.",
+  searchFailed: "Search failed.",
   goTo: "Go to",
   filter: "Filter",
   filterActive: "Filter · {count}",
@@ -49,6 +53,7 @@ export const shellLabelsEn: ShellLabels = {
   selectedCount: "{count} selected",
   selectAll: "Select all",
   deselectAll: "Deselect all",
+  selectRow: "Select {name}",
   clearSelection: "Clear selection",
   columns: "Columns",
   pagerTotal: "{total} items",
@@ -67,6 +72,7 @@ export const shellLabelsZh: ShellLabels = {
   search: "搜索",
   searchPlaceholder: "搜索或跳转到…",
   searchEmpty: "没有找到结果。",
+  searchFailed: "搜索失败。",
   goTo: "跳转到",
   filter: "筛选",
   filterActive: "筛选 · {count}",
@@ -77,6 +83,7 @@ export const shellLabelsZh: ShellLabels = {
   selectedCount: "已选 {count} 项",
   selectAll: "全选",
   deselectAll: "取消全选",
+  selectRow: "选择 {name}",
   clearSelection: "取消选择",
   columns: "列",
   pagerTotal: "共 {total} 条",
