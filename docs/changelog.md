@@ -4,6 +4,11 @@
 
 - The space panel folds and unfolds with a 200ms width transition; it stays mounted (collapsed to
   0) while folded, and dragging it below its minimum folds it too.
+- Tooling: Biome replaces ESLint (`bun run lint` / `bun run lint:fix`). The `Shell` prefix rule now
+  covers every type in `registry/shell` (the one internal type became `ShellPanelState`);
+  `collection-table.tsx` opts out of `useSemanticElements` / `useFocusableInteractive` because it
+  is a div-based ARIA grid.
+- Pitfall: `react-refresh/only-export-components` is Biome's `useComponentExportOnlyModules`.
 
 ## 2026-11-22 — v0.2.0
 

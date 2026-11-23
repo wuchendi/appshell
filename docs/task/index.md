@@ -6,3 +6,4 @@
 | [x] | shell-collection — generic column table (v0.2.0) | — |
 | [x] | tinylink installs from the registry (wuchendi/tinylink PLAN-035) | — |
 | [x] | Animated space panel fold | — |
+| [x] | Switch ESLint to Biome | — |

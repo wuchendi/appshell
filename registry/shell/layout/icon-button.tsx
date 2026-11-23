@@ -1,6 +1,6 @@
+import { cn } from "cn";
 import type { LucideIcon } from "lucide-react";
 import type { ComponentProps } from "react";
-import { cn } from "cn";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -8,7 +8,11 @@ function Keys({ keys }: { keys: string[] }) {
   return (
     <span className="flex gap-0.5">
       {keys.map(k => (
-        <kbd key={k} data-slot="kbd" className="rounded-sm bg-background/20 px-1 font-sans text-[11px] leading-4">
+        <kbd
+          key={k}
+          data-slot="kbd"
+          className="rounded-sm bg-background/20 px-1 font-sans text-[11px] leading-4"
+        >
           {k}
         </kbd>
       ))}
@@ -33,7 +37,7 @@ export function IconButton({
   return (
     <Tooltip>
       <TooltipTrigger
-        render={(
+        render={
           <Button
             variant="ghost"
             size="icon-sm"
@@ -41,7 +45,7 @@ export function IconButton({
             className={cn("shrink-0 text-muted-foreground", className)}
             {...props}
           />
-        )}
+        }
       >
         <Icon />
       </TooltipTrigger>

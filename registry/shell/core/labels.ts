@@ -65,9 +65,9 @@ export const shellLabelsZh: ShellLabels = {
 
 /** Replaces `{name}` placeholders in a label. */
 export function formatLabel(label: string, values: Record<string, string | number>): string {
-  return label.replace(/\{(\w+)\}/g, (match, key: string) => (key in values
-    ? String(values[key])
-    : match));
+  return label.replace(/\{(\w+)\}/g, (match, key: string) =>
+    key in values ? String(values[key]) : match,
+  );
 }
 
 const LabelsContext = createContext<ShellLabels>(shellLabelsEn);

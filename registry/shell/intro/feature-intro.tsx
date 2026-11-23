@@ -1,12 +1,19 @@
 import type { LucideIcon } from "lucide-react";
-import type { ReactNode } from "react";
 import { ArrowDown } from "lucide-react";
+import type { ReactNode } from "react";
 
 /**
  * First-run page for a list with nothing in it yet: what the feature is, its one action and a
  * static picture of it. It replaces the empty state, so it goes away once the first item exists.
  */
-export function FeatureIntro({ icon: Icon, label, title, description, action, art }: {
+export function FeatureIntro({
+  icon: Icon,
+  label,
+  title,
+  description,
+  action,
+  art,
+}: {
   icon: LucideIcon;
   label: string;
   title: string;
@@ -34,7 +41,11 @@ export function FeatureIntro({ icon: Icon, label, title, description, action, ar
 
 /** A card in an intro picture. */
 export function IntroArtCard({ children }: { children: ReactNode }) {
-  return <div className="rounded-lg bg-background p-3 text-[13px] shadow-sm ring-1 ring-border/60">{children}</div>;
+  return (
+    <div className="rounded-lg bg-background p-3 text-[13px] shadow-sm ring-1 ring-border/60">
+      {children}
+    </div>
+  );
 }
 
 /** A down arrow between two intro cards. */

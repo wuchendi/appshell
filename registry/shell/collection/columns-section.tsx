@@ -4,7 +4,11 @@ import { useShellLabels } from "@/shell/core/labels";
 import { MenuSection, MenuSwitch } from "@/shell/menus/menus";
 
 /** The display menu's column switches for a `CollectionTable`. */
-export function ColumnsSection<T>({ columns, hidden, onToggle }: {
+export function ColumnsSection<T>({
+  columns,
+  hidden,
+  onToggle,
+}: {
   columns: ShellColumn<T>[];
   hidden: readonly string[];
   onToggle: (key: string) => void;
@@ -15,9 +19,7 @@ export function ColumnsSection<T>({ columns, hidden, onToggle }: {
       {hideableColumns(columns).map(c => (
         <MenuSwitch
           key={c.key}
-          label={typeof c.header === "string"
-            ? c.header
-            : c.key}
+          label={typeof c.header === "string" ? c.header : c.key}
           checked={!hidden.includes(c.key)}
           onChange={() => onToggle(c.key)}
         />

@@ -29,7 +29,7 @@ Use the Bun version in `.bun-version`.
 ```bash
 bun install
 bun run check            # lint + typecheck + unit tests (coverage) + registry and demo builds — the gate
-bun run lint -- --fix
+bun run lint:fix           # biome check --write (format + organize imports + safe fixes)
 bun run registry:smoke   # installs every item into a scratch app with non-default aliases (needs network)
 bun run --cwd apps/shell-web dev    # in tmux, never in the foreground
 ```
@@ -38,7 +38,7 @@ bun run --cwd apps/shell-web dev    # in tmux, never in the foreground
 
 - **Imports**: only declared dependencies and `@/shell/...`; shadcn UI as `@/components/ui/*`
   (rewritten on install). Import `cn` from the `cn` package.
-- **Naming**: exported types carry the `Shell` prefix (React `*Props` exempt; lint-enforced).
+- **Naming**: exported types carry the `Shell` prefix (React `*Props` exempt; enforced by Biome `useNamingConvention`).
 - **Strings**: every visible string comes from `ShellLabels` (`core/labels.ts`, en and zh). Add a
   key to both languages.
 - **Routing**: TanStack Router; `href` / `to` are plain strings cast at the `Link`.

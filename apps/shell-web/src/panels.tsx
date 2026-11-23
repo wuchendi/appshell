@@ -11,7 +11,13 @@ export function ItemsPanel() {
   return (
     <PanelFrame title="Items">
       <PanelSection label="Views">
-        <PanelRow to="/items" icon={List} count={ITEMS.length} active={status === "all"} onClick={() => setStatus("all")}>
+        <PanelRow
+          to="/items"
+          icon={List}
+          count={ITEMS.length}
+          active={status === "all"}
+          onClick={() => setStatus("all")}
+        >
           All items
         </PanelRow>
         {STATUSES.map(s => (
@@ -38,10 +44,14 @@ export function SettingsPanel() {
   return (
     <PanelFrame title="Settings">
       <PanelSection label="Account">
-        <PanelRow to="/settings" icon={SlidersHorizontal} active={pathname === "/settings"}>General</PanelRow>
+        <PanelRow to="/settings" icon={SlidersHorizontal} active={pathname === "/settings"}>
+          General
+        </PanelRow>
       </PanelSection>
       <PanelSection label="Workspace">
-        <PanelRow to="/settings/members" icon={Users} active={pathname === "/settings/members"}>Members</PanelRow>
+        <PanelRow to="/settings/members" icon={Users} active={pathname === "/settings/members"}>
+          Members
+        </PanelRow>
       </PanelSection>
     </PanelFrame>
   );

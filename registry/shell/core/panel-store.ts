@@ -1,14 +1,14 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-interface PanelState {
+interface ShellPanelState {
   /** Whether the space panel is shown beside the page. Persisted. */
   open: boolean;
   toggle: () => void;
   setOpen: (open: boolean) => void;
 }
 
-export const useShellPanelStore = create<PanelState>()(
+export const useShellPanelStore = create<ShellPanelState>()(
   persist(
     set => ({
       open: true,

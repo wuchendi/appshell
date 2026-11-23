@@ -1,5 +1,5 @@
-import type { ItemStatus } from "./data";
 import { create } from "zustand";
+import type { ItemStatus } from "./data";
 
 interface DemoState {
   lang: "en" | "zh";

@@ -1,8 +1,10 @@
-import type { ShellColumn } from "@/shell/collection/columns";
 import { describe, expect, it } from "bun:test";
+import type { ShellColumn } from "@/shell/collection/columns";
 import { gridTemplate, hideableColumns, visibleColumns } from "@/shell/collection/columns";
 
-interface Row { name: string }
+interface Row {
+  name: string;
+}
 const cols: ShellColumn<Row>[] = [
   {
     key: "name",
@@ -32,7 +34,11 @@ const cols: ShellColumn<Row>[] = [
 
 describe("visibleColumns", () => {
   it("keeps the primary and drops hidden ones", () => {
-    expect(visibleColumns(cols, ["tags"], false).map(c => c.key)).toEqual(["name", "clicks", "created"]);
+    expect(visibleColumns(cols, ["tags"], false).map(c => c.key)).toEqual([
+      "name",
+      "clicks",
+      "created",
+    ]);
   });
 
   it("keeps only core columns when narrow", () => {
@@ -42,8 +48,12 @@ describe("visibleColumns", () => {
 
 describe("gridTemplate", () => {
   it("adds the selection and actions tracks around the columns", () => {
-    expect(gridTemplate(cols.slice(0, 3), { selectable: true, actions: "5rem" })).toBe("1rem minmax(14rem,1fr) minmax(0,11rem) 4rem 5rem");
-    expect(gridTemplate(cols.slice(3), { selectable: false, actions: null })).toBe("minmax(14rem,1fr)");
+    expect(gridTemplate(cols.slice(0, 3), { selectable: true, actions: "5rem" })).toBe(
+      "1rem minmax(14rem,1fr) minmax(0,11rem) 4rem 5rem",
+    );
+    expect(gridTemplate(cols.slice(3), { selectable: false, actions: null })).toBe(
+      "minmax(14rem,1fr)",
+    );
   });
 });
 

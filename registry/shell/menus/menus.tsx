@@ -2,19 +2,15 @@ import { cn } from "cn";
 import { Filter, Search, SlidersHorizontal, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Switch } from "@/components/ui/switch";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { isTypingTarget } from "@/shell/core/is-typing";
 import { formatLabel, useShellLabels } from "@/shell/core/labels";
 
 // A chip in a menu's toggle group: pressed reads as the primary tint.
-const CHIP
-  = "h-7 gap-1.5 px-2 text-[12px] aria-pressed:border-primary/40 aria-pressed:bg-primary/10 aria-pressed:text-primary dark:aria-pressed:border-primary/70 dark:aria-pressed:bg-primary/30 dark:aria-pressed:text-foreground";
+const CHIP =
+  "h-7 gap-1.5 px-2 text-[12px] aria-pressed:border-primary/40 aria-pressed:bg-primary/10 aria-pressed:text-primary dark:aria-pressed:border-primary/70 dark:aria-pressed:bg-primary/30 dark:aria-pressed:text-foreground";
 
 // List header controls: "Filter" (what is shown; an icon that carries the
 // active count) and "Display" (layout, sort, columns), each a titled popover,
@@ -36,22 +32,18 @@ export function FilterMenu({
   return (
     <Popover>
       <PopoverTrigger
-        render={(
+        render={
           <Button
             variant="ghost"
             size="sm"
-            aria-label={
-              active
-                ? formatLabel(labels.filterActive, { count })
-                : labels.filter
-            }
+            aria-label={active ? formatLabel(labels.filterActive, { count }) : labels.filter}
             title={labels.filter}
             className={cn(
               "h-7 min-w-7 shrink-0 gap-1.5 px-1.5 text-muted-foreground",
               active && "text-foreground",
             )}
           />
-        )}
+        }
       >
         <Filter />
         {active && (
@@ -78,7 +70,7 @@ export function DisplayMenu({ children }: { children: React.ReactNode }) {
   return (
     <Popover>
       <PopoverTrigger
-        render={(
+        render={
           <Button
             variant="ghost"
             size="icon-sm"
@@ -86,14 +78,12 @@ export function DisplayMenu({ children }: { children: React.ReactNode }) {
             title={labels.display}
             className="shrink-0 text-muted-foreground"
           />
-        )}
+        }
       >
         <SlidersHorizontal />
       </PopoverTrigger>
       <PopoverContent align="end" className="w-80 gap-1 p-3">
-        <h4 className="text-[13px] font-semibold">
-          {labels.display}
-        </h4>
+        <h4 className="text-[13px] font-semibold">{labels.display}</h4>
         {children}
       </PopoverContent>
     </Popover>
@@ -122,13 +112,7 @@ export function MenuSection({
 }
 
 // Label left, control right.
-export function MenuRow({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
+export function MenuRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex min-h-8 items-center justify-between gap-3 text-[13px]">
       <span className="text-muted-foreground">{label}</span>
@@ -169,11 +153,7 @@ export function Chips<T extends string>({
 }
 
 export function ChipCount({ count }: { count: number }) {
-  return (
-    <span className="text-[11px] text-muted-foreground tabular-nums">
-      {count}
-    </span>
-  );
+  return <span className="text-[11px] text-muted-foreground tabular-nums">{count}</span>;
 }
 
 // Clears the filters and search; render it only while one is on.
@@ -227,16 +207,13 @@ export function HeaderSearch({
   const expanded = open || value !== "";
 
   useEffect(() => {
-    if (open)
-      inputRef.current?.focus();
+    if (open) inputRef.current?.focus();
   }, [open]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key !== "/" || e.metaKey || e.ctrlKey || e.altKey)
-        return;
-      if (e.defaultPrevented || isTypingTarget(e.target))
-        return;
+      if (e.key !== "/" || e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.defaultPrevented || isTypingTarget(e.target)) return;
       e.preventDefault();
       setOpen(true);
       inputRef.current?.focus();
@@ -276,9 +253,8 @@ export function HeaderSearch({
         spellCheck={false}
         onChange={e => onChange(e.target.value)}
         onBlur={() => setOpen(false)}
-        onKeyDown={(e) => {
-          if (e.key !== "Escape")
-            return;
+        onKeyDown={e => {
+          if (e.key !== "Escape") return;
           e.preventDefault();
           close();
           e.currentTarget.blur();

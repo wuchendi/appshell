@@ -1,10 +1,14 @@
-import type { LucideIcon } from "lucide-react";
-import type { ReactNode } from "react";
 import { cn } from "cn";
+import type { LucideIcon } from "lucide-react";
 import { ChevronDown, PanelLeft } from "lucide-react";
+import type { ReactNode } from "react";
 import { use } from "react";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { MOD_KEY } from "@/shell/core/keys";
 import { useShellLabels } from "@/shell/core/labels";
 import { useShellPanelStore } from "@/shell/core/panel-store";
@@ -21,8 +25,7 @@ function PanelToggle() {
   const { hasPanel } = use(ShellPageContext);
   const open = useShellPanelStore(s => s.open);
   const toggle = useShellPanelStore(s => s.toggle);
-  if (!hasPanel || open)
-    return null;
+  if (!hasPanel || open) return null;
   return (
     <IconButton
       label={labels.toggleSidebar}
@@ -70,23 +73,31 @@ export function PageHeader({
     >
       <PanelToggle />
       <div className="flex min-w-0 flex-1 items-center gap-1">
-        {menu
-          ? (
-              <DropdownMenu>
-                <h1 className="flex min-w-0">
-                  <DropdownMenuTrigger
-                    render={<Button variant="ghost" size="sm" className="-ml-2 h-7 min-w-0 max-w-72 gap-2 px-2 text-[15px] font-semibold" />}
-                  >
-                    {label}
-                    <ChevronDown className="size-3 shrink-0 text-muted-foreground" />
-                  </DropdownMenuTrigger>
-                </h1>
-                <DropdownMenuContent align="start" className="w-auto min-w-52">
-                  {menu}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )
-          : <h1 className="flex min-w-0 items-center gap-2 pr-1 text-[15px] font-semibold">{label}</h1>}
+        {menu ? (
+          <DropdownMenu>
+            <h1 className="flex min-w-0">
+              <DropdownMenuTrigger
+                render={
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="-ml-2 h-7 min-w-0 max-w-72 gap-2 px-2 text-[15px] font-semibold"
+                  />
+                }
+              >
+                {label}
+                <ChevronDown className="size-3 shrink-0 text-muted-foreground" />
+              </DropdownMenuTrigger>
+            </h1>
+            <DropdownMenuContent align="start" className="w-auto min-w-52">
+              {menu}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <h1 className="flex min-w-0 items-center gap-2 pr-1 text-[15px] font-semibold">
+            {label}
+          </h1>
+        )}
         {tools}
       </div>
       {actions && <div className="flex shrink-0 items-center gap-1">{actions}</div>}

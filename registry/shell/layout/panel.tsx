@@ -1,14 +1,15 @@
 import type { LinkProps } from "@tanstack/react-router";
-import type { LucideIcon } from "lucide-react";
-import type { ReactElement, ReactNode } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { cn } from "cn";
+import type { LucideIcon } from "lucide-react";
 import { ChevronDown } from "lucide-react";
+import type { ReactElement, ReactNode } from "react";
 import { useState } from "react";
 import { ContextMenu, ContextMenuContent, ContextMenuTrigger } from "@/components/ui/context-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-const ROW_CLASS = "flex min-h-8 w-full items-center gap-2.5 rounded-[6px] px-3 py-1.5 text-left text-[13px] text-foreground/80 transition-colors outline-none hover:bg-foreground/[0.04] hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring aria-[current=page]:bg-foreground/[0.06] aria-[current=page]:text-foreground [&_svg]:size-4 [&_svg]:shrink-0";
+const ROW_CLASS =
+  "flex min-h-8 w-full items-center gap-2.5 rounded-[6px] px-3 py-1.5 text-left text-[13px] text-foreground/80 transition-colors outline-none hover:bg-foreground/[0.04] hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring aria-[current=page]:bg-foreground/[0.06] aria-[current=page]:text-foreground [&_svg]:size-4 [&_svg]:shrink-0";
 
 /** The router's own fuzzy match would mark parent rows active too. */
 const EXACT = { exact: true };
@@ -23,14 +24,23 @@ const DOT_CLASS: Record<ShellDotTone, string> = {
 };
 
 /** A space's panel: a 48px title row (with optional icon `actions`) over scrolling sections. */
-export function PanelFrame({ title, actions, className, children }: {
+export function PanelFrame({
+  title,
+  actions,
+  className,
+  children,
+}: {
   title: string;
   actions?: ReactNode;
   className?: string;
   children: ReactNode;
 }) {
   return (
-    <aside data-slot="space-panel" aria-label={title} className={cn("flex h-full w-full min-w-0 flex-col", className)}>
+    <aside
+      data-slot="space-panel"
+      aria-label={title}
+      className={cn("flex h-full w-full min-w-0 flex-col", className)}
+    >
       <div className="flex h-12 shrink-0 items-center gap-1 pr-2.5 pl-5">
         <h2 className="min-w-0 flex-1 truncate text-[15px] font-semibold">{title}</h2>
         {actions}
@@ -60,7 +70,9 @@ export function PanelSection({ label, children }: { label?: string; children: Re
               aria-hidden="true"
               className={cn(
                 "size-3.5 shrink-0 transition-[transform,opacity] duration-150",
-                collapsed ? "-rotate-90" : "opacity-0 group-hover/section:opacity-100 group-focus-within/section:opacity-100",
+                collapsed
+                  ? "-rotate-90"
+                  : "opacity-0 group-hover/section:opacity-100 group-focus-within/section:opacity-100",
               )}
             />
           </button>
@@ -72,8 +84,7 @@ export function PanelSection({ label, children }: { label?: string; children: Re
 }
 
 function withMenu(row: ReactElement, menu: ReactNode) {
-  if (!menu)
-    return row;
+  if (!menu) return row;
   return (
     <ContextMenu>
       <ContextMenuTrigger render={row} />
@@ -87,7 +98,19 @@ function withMenu(row: ReactElement, menu: ReactNode) {
  * Action rows are buttons because they share one path, and the router would mark every link to
  * the current path active.
  */
-export function PanelRow({ to, params, search, onClick, menu, active = false, icon: Icon, dot, count, title, children }: {
+export function PanelRow({
+  to,
+  params,
+  search,
+  onClick,
+  menu,
+  active = false,
+  icon: Icon,
+  dot,
+  count,
+  title,
+  children,
+}: {
   to?: string;
   params?: LinkProps["params"];
   search?: LinkProps["search"];
@@ -104,56 +127,72 @@ export function PanelRow({ to, params, search, onClick, menu, active = false, ic
   const navigate = useNavigate();
   const body = (
     <>
-      {dot
-        ? <span aria-hidden="true" className={cn("mx-[5px] size-1.5 shrink-0 rounded-full", DOT_CLASS[dot])} />
-        : Icon && <Icon aria-hidden="true" />}
+      {dot ? (
+        <span
+          aria-hidden="true"
+          className={cn("mx-[5px] size-1.5 shrink-0 rounded-full", DOT_CLASS[dot])}
+        />
+      ) : (
+        Icon && <Icon aria-hidden="true" />
+      )}
       <span className="min-w-0 flex-1 truncate">{children}</span>
       {count !== undefined && count > 0 && (
-        <span className="ml-auto shrink-0 text-[12px] text-muted-foreground/70 tabular-nums">{count}</span>
+        <span className="ml-auto shrink-0 text-[12px] text-muted-foreground/70 tabular-nums">
+          {count}
+        </span>
       )}
     </>
   );
   const current = active ? "page" : undefined;
   return (
     <li>
-      {onClick
-        ? (
-            <button
-              type="button"
-              aria-current={current}
-              title={title}
-              onClick={() => {
-                onClick();
-                if (to)
-                  void navigate({ to: to as LinkProps["to"], params: params as never });
-              }}
-              className={ROW_CLASS}
-            >
-              {body}
-            </button>
-          )
-        : to
-          ? withMenu(
-              <Link
-                to={to as LinkProps["to"]}
-                params={params as never}
-                search={search as never}
-                activeOptions={EXACT}
-                aria-current={current}
-                title={title}
-                className={ROW_CLASS}
-              >
-                {body}
-              </Link>,
-              menu,
-            )
-          : <div title={title} className={cn(ROW_CLASS, "hover:bg-transparent")}>{body}</div>}
+      {onClick ? (
+        <button
+          type="button"
+          aria-current={current}
+          title={title}
+          onClick={() => {
+            onClick();
+            if (to) void navigate({ to: to as LinkProps["to"], params: params as never });
+          }}
+          className={ROW_CLASS}
+        >
+          {body}
+        </button>
+      ) : to ? (
+        withMenu(
+          <Link
+            to={to as LinkProps["to"]}
+            params={params as never}
+            search={search as never}
+            activeOptions={EXACT}
+            aria-current={current}
+            title={title}
+            className={ROW_CLASS}
+          >
+            {body}
+          </Link>,
+          menu,
+        )
+      ) : (
+        <div title={title} className={cn(ROW_CLASS, "hover:bg-transparent")}>
+          {body}
+        </div>
+      )}
     </li>
   );
 }
 
 /** Muted closing row that opens the full list. */
-export function PanelAllRow({ to, label, active = false }: { to: string; label: string; active?: boolean }) {
+export function PanelAllRow({
+  to,
+  label,
+  active = false,
+}: {
+  to: string;
+  label: string;
+  active?: boolean;
+}) {
   return (
     <ul className="mt-3">
       <li>

@@ -1,11 +1,16 @@
-import type { KeyboardEvent, MouseEvent, ReactNode } from "react";
-import type { ShellColumn } from "@/shell/collection/columns";
 import { cn } from "cn";
 import { ArrowDown, ArrowUp } from "lucide-react";
+import type { KeyboardEvent, MouseEvent, ReactNode } from "react";
 import { useRef } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ContextMenu, ContextMenuContent, ContextMenuTrigger } from "@/components/ui/context-menu";
-import { ACTIONS_WIDTH, gridTemplate, ROW_INTERACTIVE, visibleColumns } from "@/shell/collection/columns";
+import type { ShellColumn } from "@/shell/collection/columns";
+import {
+  ACTIONS_WIDTH,
+  gridTemplate,
+  ROW_INTERACTIVE,
+  visibleColumns,
+} from "@/shell/collection/columns";
 import { useShellLabels } from "@/shell/core/labels";
 import { useIsMobile } from "@/shell/core/use-is-mobile";
 import { SHELL_ROW_ATTR, useRowNavigation } from "@/shell/core/use-row-navigation";
@@ -17,11 +22,13 @@ export interface CollectionTableProps<T> {
   getRowId: (row: T) => string;
   hiddenColumns?: string[];
   sort?: { key: string; direction?: "asc" | "desc"; onSort: (key: string) => void };
-  selection?: {
-    selected: ReadonlySet<string>;
-    onToggle: (id: string, on: boolean) => void;
-    onToggleAll: (on: boolean) => void;
-  } | undefined;
+  selection?:
+    | {
+        selected: ReadonlySet<string>;
+        onToggle: (id: string, on: boolean) => void;
+        onToggleAll: (on: boolean) => void;
+      }
+    | undefined;
   /** Opens a row on click (outside its own controls) or Enter. */
   onOpen?: ((row: T) => void) | undefined;
   /** Right-click menu entries for a row. */
@@ -72,8 +79,7 @@ export function CollectionTable<T>({
   const allSelected = !!selection && ids.length > 0 && ids.every(id => selection.selected.has(id));
 
   function openFromClick(row: T, e: MouseEvent) {
-    if (!onOpen || (e.target as HTMLElement).closest(ROW_INTERACTIVE))
-      return;
+    if (!onOpen || (e.target as HTMLElement).closest(ROW_INTERACTIVE)) return;
     onOpen(row);
   }
   function openOnEnter(row: T, e: KeyboardEvent) {
@@ -88,47 +94,53 @@ export function CollectionTable<T>({
       <div
         role="row"
         style={{ gridTemplateColumns: template }}
-        className={cn("sticky z-10 grid h-9 items-center gap-3 border-b bg-background px-2 text-xs text-muted-foreground", headerClassName)}
+        className={cn(
+          "sticky z-10 grid h-9 items-center gap-3 border-b bg-background px-2 text-xs text-muted-foreground",
+          headerClassName,
+        )}
       >
         {selection && (
           <span className="flex">
-            <Checkbox checked={allSelected} onCheckedChange={v => selection.onToggleAll(v === true)} aria-label={labels.selectAll} />
+            <Checkbox
+              checked={allSelected}
+              onCheckedChange={v => selection.onToggleAll(v === true)}
+              aria-label={labels.selectAll}
+            />
           </span>
         )}
-        {shown.map((c) => {
+        {shown.map(c => {
           const active = !!sort && !!c.sortKey && sort.key === c.sortKey;
-          const Arrow = sort?.direction === "asc"
-            ? ArrowUp
-            : ArrowDown;
+          const Arrow = sort?.direction === "asc" ? ArrowUp : ArrowDown;
           return (
             <span
               key={c.key}
               role="columnheader"
-              aria-sort={active
-                ? (sort?.direction === "asc"
-                    ? "ascending"
-                    : "descending")
-                : undefined}
+              aria-sort={
+                active ? (sort?.direction === "asc" ? "ascending" : "descending") : undefined
+              }
               className={cn("min-w-0 truncate", c.align === "end" && ALIGN_END)}
             >
-              {c.sortKey && sort
-                ? (
-                    <button
-                      type="button"
-                      onClick={() => sort.onSort(c.sortKey!)}
-                      className={cn("inline-flex items-center gap-0.5 hover:text-foreground", active && "text-foreground")}
-                    >
-                      {c.header}
-                      {active && <Arrow className="size-3" />}
-                    </button>
-                  )
-                : c.header}
+              {c.sortKey && sort ? (
+                <button
+                  type="button"
+                  onClick={() => sort.onSort(c.sortKey!)}
+                  className={cn(
+                    "inline-flex items-center gap-0.5 hover:text-foreground",
+                    active && "text-foreground",
+                  )}
+                >
+                  {c.header}
+                  {active && <Arrow className="size-3" />}
+                </button>
+              ) : (
+                c.header
+              )}
             </span>
           );
         })}
         {rowActions && <span />}
       </div>
-      {rows.map((row) => {
+      {rows.map(row => {
         const id = getRowId(row);
         const selected = !!selection?.selected.has(id);
         const element = (
@@ -153,12 +165,20 @@ export function CollectionTable<T>({
                   checked={selected}
                   onCheckedChange={v => selection.onToggle(id, v === true)}
                   aria-label={id}
-                  className={cn("transition-opacity", !selected && "pointer-fine:opacity-0 pointer-fine:group-hover:opacity-100 pointer-fine:focus-visible:opacity-100")}
+                  className={cn(
+                    "transition-opacity",
+                    !selected &&
+                      "pointer-fine:opacity-0 pointer-fine:group-hover:opacity-100 pointer-fine:focus-visible:opacity-100",
+                  )}
                 />
               </span>
             )}
             {shown.map(c => (
-              <span key={c.key} role="cell" className={cn("min-w-0", c.align === "end" && ALIGN_END)}>
+              <span
+                key={c.key}
+                role="cell"
+                className={cn("min-w-0", c.align === "end" && ALIGN_END)}
+              >
                 {c.cell(row)}
               </span>
             ))}
@@ -169,8 +189,7 @@ export function CollectionTable<T>({
             )}
           </div>
         );
-        if (!rowMenu)
-          return element;
+        if (!rowMenu) return element;
         return (
           <ContextMenu key={id}>
             <ContextMenuTrigger render={element} />

@@ -1,6 +1,6 @@
-import type { ShellSpace } from "@/shell/core/spaces";
 import { describe, expect, it } from "bun:test";
 import { Link2 } from "lucide-react";
+import type { ShellSpace } from "@/shell/core/spaces";
 import { isActivePath, spaceFor } from "@/shell/core/spaces";
 
 const spaces: ShellSpace[] = [

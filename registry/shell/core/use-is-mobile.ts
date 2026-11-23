@@ -6,8 +6,7 @@ const QUERY = "(max-width: 767px)";
 export function useIsMobile(): boolean {
   const [mobile, setMobile] = useState(false);
   useEffect(() => {
-    if (typeof window.matchMedia !== "function")
-      return;
+    if (typeof window.matchMedia !== "function") return;
     const query = window.matchMedia(QUERY);
     const update = () => setMobile(query.matches);
     update();

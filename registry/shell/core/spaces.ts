@@ -20,13 +20,12 @@ function under(pathname: string, prefix: string): boolean {
 }
 
 /** Whether `pathname` belongs to an entry with an `href` (and optional `exact` / `match`). */
-export function isActivePath(pathname: string, entry: { href: string; exact?: boolean; match?: string[] }): boolean {
-  if (entry.exact)
-    return pathname === entry.href;
-  return [
-    entry.href,
-    ...(entry.match ?? []),
-  ].some(p => under(pathname, p));
+export function isActivePath(
+  pathname: string,
+  entry: { href: string; exact?: boolean; match?: string[] },
+): boolean {
+  if (entry.exact) return pathname === entry.href;
+  return [entry.href, ...(entry.match ?? [])].some(p => under(pathname, p));
 }
 
 /** The first space `pathname` belongs to. */

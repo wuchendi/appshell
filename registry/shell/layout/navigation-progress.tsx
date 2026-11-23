@@ -17,10 +17,13 @@ export function NavigationProgress() {
     const id = setTimeout(setVisible, 150, true);
     return () => clearTimeout(id);
   }, [loading]);
-  if (!visible)
-    return null;
+  if (!visible) return null;
   return (
-    <div role="progressbar" aria-label={labels.loading} className="pointer-events-none absolute inset-x-0 top-0 z-30 h-0.5 overflow-hidden">
+    <div
+      role="progressbar"
+      aria-label={labels.loading}
+      className="pointer-events-none absolute inset-x-0 top-0 z-30 h-0.5 overflow-hidden"
+    >
       <div className="h-full w-1/3 animate-[shell-nav-progress_1.1s_ease-in-out_infinite] bg-primary" />
     </div>
   );
