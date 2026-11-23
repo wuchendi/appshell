@@ -1,9 +1,10 @@
 import { cn } from "cn";
 import { ArrowDown, ArrowUp } from "lucide-react";
-import type { KeyboardEvent, MouseEvent, ReactNode } from "react";
-import { useRef } from "react";
+import type { KeyboardEvent, MouseEvent, ReactElement, ReactNode } from "react";
+import { Fragment, useRef } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ContextMenu, ContextMenuContent, ContextMenuTrigger } from "@/components/ui/context-menu";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import type { ShellColumn } from "@/shell/collection/columns";
 import {
   ACTIONS_WIDTH,
@@ -12,6 +13,7 @@ import {
   visibleColumns,
 } from "@/shell/collection/columns";
 import { useShellLabels } from "@/shell/core/labels";
+import { usePageFill } from "@/shell/core/page-fill";
 import { useIsMobile } from "@/shell/core/use-is-mobile";
 import { SHELL_ROW_ATTR, useRowNavigation } from "@/shell/core/use-row-navigation";
 
@@ -37,18 +39,27 @@ export interface CollectionTableProps<T> {
   rowActions?: ((row: T) => ReactNode) | undefined;
   actionsWidth?: string;
   getRowClassName?: ((row: T) => string | undefined) | undefined;
+  /** A full-width block under a row, shown while it returns non-null; the host owns expansion. */
+  renderSubRow?: ((row: T) => ReactNode | null) | undefined;
+  /** Skeleton rows in place of the rows, under the header. */
+  loading?: boolean | undefined;
+  /** Shown in place of the rows when there are none (and not loading), under the header. */
+  empty?: ReactNode;
   /** Accessible name of the table. */
   label?: string;
-  /** Sticky offset of the column header (below the page header by default). */
+  /** Extra classes for the sticky column header. */
   headerClassName?: string;
 }
+
+const SKELETON_ROWS = 8;
 
 const ALIGN_END = "flex justify-end text-right";
 
 /**
  * A column list: a sticky header (select all, sortable columns) over 36px rows. Rows open on
  * click or Enter, take J/K, offer a right-click menu and reveal their actions on hover. Narrow
- * screens keep the primary and `core` columns.
+ * screens keep the primary and `core` columns. Inside `<PageBody fill>` the table scrolls on its
+ * own with the header pinned to its top; elsewhere the header pins below the page header.
  */
 export function CollectionTable<T>({
   columns,
@@ -62,11 +73,15 @@ export function CollectionTable<T>({
   rowActions,
   actionsWidth = ACTIONS_WIDTH,
   getRowClassName,
+  renderSubRow,
+  loading = false,
+  empty,
   label,
-  headerClassName = "top-12",
+  headerClassName,
 }: CollectionTableProps<T>) {
   const labels = useShellLabels();
   const narrow = useIsMobile();
+  const fill = usePageFill();
   const listRef = useRef<HTMLDivElement>(null);
   useRowNavigation(listRef);
 
@@ -89,13 +104,14 @@ export function CollectionTable<T>({
     }
   }
 
-  return (
+  const table = (
     <div role="table" aria-label={label} ref={listRef} className="flex flex-col gap-px">
       <div
         role="row"
         style={{ gridTemplateColumns: template }}
         className={cn(
           "sticky z-10 grid h-9 items-center gap-3 border-b bg-background px-2 text-xs text-muted-foreground",
+          fill ? "top-0" : "top-12",
           headerClassName,
         )}
       >
@@ -103,6 +119,7 @@ export function CollectionTable<T>({
           <span className="flex">
             <Checkbox
               checked={allSelected}
+              disabled={loading || ids.length === 0}
               onCheckedChange={v => selection.onToggleAll(v === true)}
               aria-label={labels.selectAll}
             />
@@ -140,63 +157,109 @@ export function CollectionTable<T>({
         })}
         {rowActions && <span />}
       </div>
-      {rows.map(row => {
-        const id = getRowId(row);
-        const selected = !!selection?.selected.has(id);
-        const element = (
+      {loading &&
+        Array.from({ length: SKELETON_ROWS }, (_, i) => (
           <div
-            key={id}
+            // biome-ignore lint/suspicious/noArrayIndexKey: placeholders have no identity
+            key={i}
             role="row"
-            tabIndex={0}
-            {...{ [SHELL_ROW_ATTR]: "" }}
-            data-selected={selected || undefined}
+            aria-hidden="true"
+            data-slot="collection-skeleton"
             style={{ gridTemplateColumns: template }}
-            onClick={e => openFromClick(row, e)}
-            onKeyDown={e => openOnEnter(row, e)}
-            className={cn(
-              "group grid h-9 min-w-0 items-center gap-3 rounded-md px-2 text-[13px] outline-none transition-colors hover:bg-secondary/50 focus-visible:bg-secondary/60 focus-visible:ring-2 focus-visible:ring-ring/50 data-selected:bg-secondary/70",
-              onOpen && "cursor-pointer",
-              getRowClassName?.(row),
-            )}
+            className="grid h-9 items-center gap-3 px-2"
           >
-            {selection && (
-              <span className="flex">
-                <Checkbox
-                  checked={selected}
-                  onCheckedChange={v => selection.onToggle(id, v === true)}
-                  aria-label={id}
-                  className={cn(
-                    "transition-opacity",
-                    !selected &&
-                      "pointer-fine:opacity-0 pointer-fine:group-hover:opacity-100 pointer-fine:focus-visible:opacity-100",
-                  )}
+            {selection && <span />}
+            {shown.map((c, j) => (
+              <span key={c.key} className={cn("flex", c.align === "end" && "justify-end")}>
+                <span
+                  className={cn("h-3 animate-pulse rounded bg-muted", j === 0 ? "w-2/3" : "w-1/2")}
                 />
               </span>
-            )}
-            {shown.map(c => (
-              <span
-                key={c.key}
-                role="cell"
-                className={cn("min-w-0", c.align === "end" && ALIGN_END)}
-              >
-                {c.cell(row)}
-              </span>
             ))}
-            {rowActions && (
-              <span className="flex justify-end opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100 has-[[aria-expanded=true]]:opacity-100">
-                {rowActions(row)}
-              </span>
-            )}
+            {rowActions && <span />}
           </div>
-        );
-        if (!rowMenu) return element;
-        return (
-          <ContextMenu key={id}>
-            <ContextMenuTrigger render={element} />
-            <ContextMenuContent className="w-auto min-w-40">{rowMenu(row)}</ContextMenuContent>
-          </ContextMenu>
-        );
-      })}
+        ))}
+      {!loading && rows.length === 0 && empty}
+      {!loading &&
+        rows.map(row => {
+          const id = getRowId(row);
+          const selected = !!selection?.selected.has(id);
+          const element = (
+            <div
+              role="row"
+              tabIndex={0}
+              {...{ [SHELL_ROW_ATTR]: "" }}
+              data-selected={selected || undefined}
+              style={{ gridTemplateColumns: template }}
+              onClick={e => openFromClick(row, e)}
+              onKeyDown={e => openOnEnter(row, e)}
+              className={cn(
+                "group grid h-9 min-w-0 items-center gap-3 rounded-md px-2 text-[13px] outline-none transition-colors hover:bg-secondary/50 focus-visible:bg-secondary/60 focus-visible:ring-2 focus-visible:ring-ring/50 data-selected:bg-secondary/70",
+                onOpen && "cursor-pointer",
+                getRowClassName?.(row),
+              )}
+            >
+              {selection && (
+                <span className="flex">
+                  <Checkbox
+                    checked={selected}
+                    onCheckedChange={v => selection.onToggle(id, v === true)}
+                    aria-label={id}
+                    className={cn(
+                      "transition-opacity",
+                      !selected &&
+                        "pointer-fine:opacity-0 pointer-fine:group-hover:opacity-100 pointer-fine:focus-visible:opacity-100",
+                    )}
+                  />
+                </span>
+              )}
+              {shown.map(c => (
+                <span
+                  key={c.key}
+                  role="cell"
+                  className={cn("min-w-0", c.align === "end" && ALIGN_END)}
+                >
+                  {c.cell(row)}
+                </span>
+              ))}
+              {rowActions && (
+                <span className="flex justify-end opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100 has-[[aria-expanded=true]]:opacity-100">
+                  {rowActions(row)}
+                </span>
+              )}
+            </div>
+          );
+          const sub = renderSubRow?.(row);
+          return (
+            <Fragment key={id}>
+              {withMenu(element, rowMenu?.(row))}
+              {sub != null && (
+                <div role="row" data-slot="collection-subrow" className="px-2 pb-2">
+                  <div role="cell" className="min-w-0">
+                    {sub}
+                  </div>
+                </div>
+              )}
+            </Fragment>
+          );
+        })}
     </div>
+  );
+
+  if (!fill) return table;
+  return (
+    <ScrollArea data-slot="collection-scroll" className="min-h-0 flex-1">
+      {table}
+    </ScrollArea>
+  );
+}
+
+function withMenu(row: ReactElement, menu: ReactNode) {
+  if (!menu) return row;
+  return (
+    <ContextMenu>
+      <ContextMenuTrigger render={row} />
+      <ContextMenuContent className="w-auto min-w-40">{menu}</ContextMenuContent>
+    </ContextMenu>
   );
 }

@@ -1,13 +1,27 @@
 import { useRouterState } from "@tanstack/react-router";
-import { Archive, CircleCheck, CirclePause, List, SlidersHorizontal, Users } from "lucide-react";
+import {
+  Archive,
+  CircleCheck,
+  CirclePause,
+  List,
+  Server,
+  SlidersHorizontal,
+  Users,
+} from "lucide-react";
+import type { ShellDotTone } from "@/shell/layout/panel";
 import { PanelFrame, PanelRow, PanelSection } from "@/shell/layout/panel";
 import { ITEMS, STATUSES } from "./data";
 import { useDemoStore } from "./store";
 
 const ICONS = { active: CircleCheck, paused: CirclePause, archived: Archive };
 
+const TONES: ShellDotTone[] = ["success", "info", "progress", "warning", "danger", "muted"];
+
 export function ItemsPanel() {
   const { status, setStatus } = useDemoStore();
+  const pathname = useRouterState({
+    select: s => s.location.pathname,
+  });
   return (
     <PanelFrame title="Items">
       <PanelSection label="Views">
@@ -15,7 +29,7 @@ export function ItemsPanel() {
           to="/items"
           icon={List}
           count={ITEMS.length}
-          active={status === "all"}
+          active={pathname === "/items" && status === "all"}
           onClick={() => setStatus("all")}
         >
           All items
@@ -26,10 +40,23 @@ export function ItemsPanel() {
             to="/items"
             icon={ICONS[s]}
             count={ITEMS.filter(i => i.status === s).length}
-            active={status === s}
+            active={pathname === "/items" && status === s}
             onClick={() => setStatus(s)}
           >
             {s[0]!.toUpperCase() + s.slice(1)}
+          </PanelRow>
+        ))}
+      </PanelSection>
+      <PanelSection label="Examples">
+        <PanelRow to="/items/server" icon={Server} active={pathname === "/items/server"}>
+          Server paged
+        </PanelRow>
+      </PanelSection>
+      <PanelSection label="Tones">
+        <PanelRow inset>All tones</PanelRow>
+        {TONES.map(tone => (
+          <PanelRow key={tone} dot={tone}>
+            {tone}
           </PanelRow>
         ))}
       </PanelSection>

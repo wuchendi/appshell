@@ -7,3 +7,4 @@
 | [x] | tinylink installs from the registry (wuchendi/tinylink PLAN-035) | — |
 | [x] | Animated space panel fold | — |
 | [x] | Switch ESLint to Biome | — |
+| [x] | azctl-requirements — fill pages, paged tables, panel tones, host canvas (v0.3.0) | docs/plan/202611230300-azctl-requirements.md |

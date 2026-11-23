@@ -29,17 +29,25 @@ bunx shadcn add @cdlab/shell-collection  # column table, batch bar, column switc
 ```
 
 Files land in `src/shell/**` and import each other as `@/shell/...`, so the host needs the usual
-`@/*` → `src/*` alias. `shell-layout` also adds a `--canvas` color (light and dark) and the
-progress-bar keyframes to the host stylesheet.
+`@/*` → `src/*` alias. `shell-layout` adds the progress-bar keyframes to the host stylesheet.
+
+The canvas behind the rail and the content card is `var(--shell-canvas, var(--color-muted))`. Set
+`--shell-canvas` in the host theme (light and dark, however the host switches them) to pick
+another color:
+
+```css
+:root { --shell-canvas: oklch(0.965 0 0); }
+.dark { --shell-canvas: oklch(0.11 0 0); }
+```
 
 | Item | What it is |
 | --- | --- |
-| `shell-core` | Labels (en / zh) and their provider, `ShellSpace` and path matching, the persisted panel state, the typing guard for bare-key shortcuts, J/K row navigation, the mobile hook |
-| `shell-layout` | `<AppShell>`, `Rail`, `PageHeader`, `IconButton`, `PanelFrame` / `PanelSection` / `PanelRow` / `PanelAllRow`, `NavigationProgress` |
+| `shell-core` | Labels (en / zh) and their provider, `ShellSpace` and path matching, the persisted panel state, the typing guard for bare-key shortcuts, J/K row navigation, the mobile hook, the fill-page context |
+| `shell-layout` | `<AppShell>`, `Rail`, `PageHeader`, `PageBody`, `IconButton`, `PanelFrame` / `PanelSection` / `PanelRow` / `PanelAllRow`, `NavigationProgress` |
 | `shell-menus` | `FilterMenu`, `DisplayMenu`, `MenuSection`, `MenuRow`, `MenuSwitch`, `Chips`, `ChipCount`, `ResetButton`, `HeaderSearch` |
 | `shell-search` | `SearchDialog` over the host's own search function plus a "Go to" list of the spaces |
 | `shell-intro` | `FeatureIntro`, `IntroArtCard`, `IntroArtArrow` |
-| `shell-collection` | `CollectionTable` (sticky header, sortable columns, select all, 36px rows that open on click / Enter, J/K, right-click menu, hover actions, narrow `core` columns), `BatchBar`, `ColumnsSection`; `ShellColumn` |
+| `shell-collection` | `CollectionTable` (sticky header, sortable columns, select all, 36px rows that open on click / Enter, J/K, right-click menu, hover actions, narrow `core` columns, sub-rows, loading and empty states, inner scrolling in fill pages), `CollectionPager` and `useCollectionPage`, `BatchBar`, `ColumnsSection`; `ShellColumn` |
 
 ## Use
 
@@ -97,9 +105,24 @@ export function Shell() {
   `shellLabelsZh` ship with the shell; hosts on i18n build the object from their translations.
 - **Rows**: give list rows `data-shell-row` and `tabIndex={0}`, then `useRowNavigation(listRef)`
   for J/K.
+- **Fill pages**: by default the whole page scrolls under the pinned header. A list page that
+  should keep its column header and pager on screen renders `<PageBody fill>` as a direct child
+  of its root, after `<PageHeader>`: the body takes the remaining height and a `CollectionTable`
+  in it scrolls on its own (or use your own `ScrollArea` with `min-h-0 flex-1`). Content taller
+  than the window still scrolls with the page. It is per page, so a detail page in the same space
+  keeps the normal layout.
 - **Tables**: describe columns as `ShellColumn<T>` (the first is the primary column; `width` is a
   grid track; `sortKey` makes the header sort; `core` keeps it on narrow screens) and render
   `<CollectionTable>`; put `<ColumnsSection>` in the display menu and `<BatchBar>` after the list.
+  `renderSubRow={row => node | null}` adds a full-width block under a row (you own the expanded
+  state; J/K skips it), `loading` shows skeleton rows and `empty` replaces the rows.
+- **Paging**: client mode — sort and filter first, then
+  `const { rows, pager } = useCollectionPage(sorted)` and render `<CollectionTable rows={rows}>`
+  followed by `<CollectionPager {...pager} selected={n} />`. Server mode — pass `page`, `pageSize`,
+  `total`, `onPageChange` (and `onPageSizeChange`) to `<CollectionPager>` yourself and give the
+  table the current page. "Select all" works on the rows the table has, i.e. the current page.
+- **Panels**: `PanelRow` takes `icon` or `dot` (`success`, `info`, `progress` (pulsing),
+  `warning`, `danger`, `muted`); `inset` keeps a row without either aligned with the others.
 - **Search**: render `<SearchDialog>` yourself (open state from `onSearch`) and pass
   `search={(query, signal) => Promise<ShellSearchResult[]>}`.
 

@@ -21,6 +21,18 @@ export interface ShellLabels {
   deselectAll: string;
   clearSelection: string;
   columns: string;
+  /** `{total}` is replaced with the number of rows. */
+  pagerTotal: string;
+  /** `{count}` and `{total}` are replaced with the selected and total rows. */
+  pagerSelected: string;
+  /** `{page}` and `{pages}` are replaced with the current page and the page count. */
+  pagerPage: string;
+  /** `{size}` is replaced with the rows per page. */
+  pageSize: string;
+  firstPage: string;
+  previousPage: string;
+  nextPage: string;
+  lastPage: string;
 }
 
 export const shellLabelsEn: ShellLabels = {
@@ -41,6 +53,14 @@ export const shellLabelsEn: ShellLabels = {
   deselectAll: "Deselect all",
   clearSelection: "Clear selection",
   columns: "Columns",
+  pagerTotal: "{total} items",
+  pagerSelected: "{count} of {total} selected",
+  pagerPage: "Page {page} of {pages}",
+  pageSize: "{size} / page",
+  firstPage: "First page",
+  previousPage: "Previous page",
+  nextPage: "Next page",
+  lastPage: "Last page",
 };
 
 export const shellLabelsZh: ShellLabels = {
@@ -61,6 +81,14 @@ export const shellLabelsZh: ShellLabels = {
   deselectAll: "取消全选",
   clearSelection: "取消选择",
   columns: "列",
+  pagerTotal: "共 {total} 条",
+  pagerSelected: "已选 {count} / {total} 条",
+  pagerPage: "第 {page} / {pages} 页",
+  pageSize: "{size} 条/页",
+  firstPage: "第一页",
+  previousPage: "上一页",
+  nextPage: "下一页",
+  lastPage: "最后一页",
 };
 
 /** Replaces `{name}` placeholders in a label. */

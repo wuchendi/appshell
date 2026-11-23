@@ -45,6 +45,11 @@
           "path": "registry/shell/core/keys.ts",
           "type": "registry:file",
           "target": "~/src/shell/core/keys.ts"
+        },
+        {
+          "path": "registry/shell/core/page-fill.ts",
+          "type": "registry:file",
+          "target": "~/src/shell/core/page-fill.ts"
         }
       ]
     },
@@ -64,17 +69,6 @@
         "sheet",
         "@cdlab/shell-core"
       ],
-      "cssVars": {
-        "theme": {
-          "color-canvas": "var(--canvas)"
-        },
-        "light": {
-          "canvas": "oklch(0.965 0 0)"
-        },
-        "dark": {
-          "canvas": "oklch(0.11 0 0)"
-        }
-      },
       "css": {
         "@keyframes shell-nav-progress": {
           "from": {
@@ -120,6 +114,11 @@
           "path": "registry/shell/layout/page-context.ts",
           "type": "registry:file",
           "target": "~/src/shell/layout/page-context.ts"
+        },
+        {
+          "path": "registry/shell/layout/page-body.tsx",
+          "type": "registry:file",
+          "target": "~/src/shell/layout/page-body.tsx"
         }
       ]
     },
@@ -148,6 +147,8 @@
         "button",
         "checkbox",
         "context-menu",
+        "dropdown-menu",
+        "scroll-area",
         "@cdlab/shell-core",
         "@cdlab/shell-menus"
       ],
@@ -171,6 +172,21 @@
           "path": "registry/shell/collection/columns-section.tsx",
           "type": "registry:file",
           "target": "~/src/shell/collection/columns-section.tsx"
+        },
+        {
+          "path": "registry/shell/collection/pager.ts",
+          "type": "registry:file",
+          "target": "~/src/shell/collection/pager.ts"
+        },
+        {
+          "path": "registry/shell/collection/use-collection-page.ts",
+          "type": "registry:file",
+          "target": "~/src/shell/collection/use-collection-page.ts"
+        },
+        {
+          "path": "registry/shell/collection/collection-pager.tsx",
+          "type": "registry:file",
+          "target": "~/src/shell/collection/collection-pager.tsx"
         }
       ]
     },

@@ -1,7 +1,7 @@
 import { createRootRoute, createRoute, createRouter, RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { ItemsPage, OverviewPage, SettingsPage } from "./pages";
+import { ItemDetailPage, ItemsPage, OverviewPage, ServerItemsPage, SettingsPage } from "./pages";
 import { Shell } from "./shell";
 import "./index.css";
 
@@ -16,6 +16,16 @@ const routeTree = root.addChildren([
     getParentRoute: () => root,
     path: "/items",
     component: ItemsPage,
+  }),
+  createRoute({
+    getParentRoute: () => root,
+    path: "/items/server",
+    component: ServerItemsPage,
+  }),
+  createRoute({
+    getParentRoute: () => root,
+    path: "/items/$id",
+    component: ItemDetailPage,
   }),
   createRoute({
     getParentRoute: () => root,

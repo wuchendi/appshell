@@ -14,12 +14,14 @@ const ROW_CLASS =
 /** The router's own fuzzy match would mark parent rows active too. */
 const EXACT = { exact: true };
 
-export type ShellDotTone = "success" | "warning" | "danger" | "muted";
+export type ShellDotTone = "success" | "warning" | "danger" | "info" | "progress" | "muted";
 
 const DOT_CLASS: Record<ShellDotTone, string> = {
   success: "bg-emerald-500",
   warning: "bg-amber-500",
   danger: "bg-destructive",
+  info: "bg-sky-500",
+  progress: "animate-pulse bg-primary",
   muted: "bg-muted-foreground/40",
 };
 
@@ -107,6 +109,7 @@ export function PanelRow({
   active = false,
   icon: Icon,
   dot,
+  inset = false,
   count,
   title,
   children,
@@ -118,6 +121,8 @@ export function PanelRow({
   active?: boolean;
   icon?: LucideIcon;
   dot?: ShellDotTone;
+  /** Reserve the marker slot when there is no `icon` or `dot`, so text lines up with rows that have one. */
+  inset?: boolean;
   count?: number;
   title?: string;
   /** Right-click menu entries for the row. */
@@ -132,8 +137,10 @@ export function PanelRow({
           aria-hidden="true"
           className={cn("mx-[5px] size-1.5 shrink-0 rounded-full", DOT_CLASS[dot])}
         />
+      ) : Icon ? (
+        <Icon aria-hidden="true" />
       ) : (
-        Icon && <Icon aria-hidden="true" />
+        inset && <span aria-hidden="true" className="size-4 shrink-0" />
       )}
       <span className="min-w-0 flex-1 truncate">{children}</span>
       {count !== undefined && count > 0 && (

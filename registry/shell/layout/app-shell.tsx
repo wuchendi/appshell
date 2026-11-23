@@ -19,6 +19,19 @@ import { PAGE_GUTTER, ShellPageContext } from "@/shell/layout/page-context";
 import type { ShellNewAction } from "@/shell/layout/rail";
 import { Rail } from "@/shell/layout/rail";
 
+// A page holding `<PageBody fill>` becomes a full-height column (as does the page root around
+// it), so the body gets a definite height. Pure CSS: nothing remounts when a page opts in.
+const FILL_PAGE = [
+  "[&:has([data-shell-fill])]:flex",
+  "[&:has([data-shell-fill])]:h-full",
+  "[&:has([data-shell-fill])]:flex-col",
+  "[&:has([data-shell-fill])]:pb-0",
+  "[&>:has([data-shell-fill])]:flex",
+  "[&>:has([data-shell-fill])]:min-h-0",
+  "[&>:has([data-shell-fill])]:flex-1",
+  "[&>:has([data-shell-fill])]:flex-col",
+].join(" ");
+
 export interface AppShellProps {
   /** Rail entries, in order; `footer` ones sit above the account control. */
   spaces: ShellSpace[];
@@ -142,7 +155,7 @@ export function AppShell({
 
   return (
     <ShellLabelsProvider value={labels}>
-      <div className="flex h-dvh w-full overflow-hidden bg-canvas text-foreground">
+      <div className="flex h-dvh w-full overflow-hidden bg-[var(--shell-canvas,var(--color-muted))] text-foreground">
         <Rail className="hidden md:flex" {...railProps} />
         <div className="flex min-h-0 min-w-0 flex-1 flex-col md:py-2 md:pr-2">
           <header className="flex h-12 shrink-0 items-center gap-2 border-b bg-background px-3 md:hidden">
@@ -155,7 +168,7 @@ export function AppShell({
               <SheetContent
                 side="left"
                 showCloseButton={false}
-                className="flex-row gap-0 bg-canvas data-[side=left]:w-auto"
+                className="flex-row gap-0 bg-[var(--shell-canvas,var(--color-muted))] data-[side=left]:w-auto"
               >
                 <SheetTitle className="sr-only">{labels.openMenu}</SheetTitle>
                 <Rail {...railProps} onNavigate={() => setNavOpen(false)} />
@@ -230,7 +243,7 @@ export function AppShell({
                 <main className="flex h-full min-h-0 min-w-0 flex-col">
                   {banner}
                   <ScrollArea className="min-h-0 flex-1">
-                    <div className={`${PAGE_GUTTER} pt-4 pb-6 md:pt-5`}>
+                    <div className={`${PAGE_GUTTER} ${FILL_PAGE} pt-4 pb-6 md:pt-5`}>
                       <ShellPageContext
                         value={{
                           ...(space?.icon ? { icon: space.icon } : {}),
