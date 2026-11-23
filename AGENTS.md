@@ -63,3 +63,7 @@ out of unit coverage and checked through the demo and `registry:smoke`.
 
 PMA: tasks in `docs/task/`, plans in `docs/plan/`, decisions and pitfalls in `docs/changelog.md`.
 Code, comments, docs and commit messages in English.
+
+Releases: tag a commit that is not yet on `main` and push both at once
+(`git push origin main vX.Y.Z`). GitHub Pages keeps the first deployment of a commit, so a tag
+added to a commit `main` already deployed never reaches `/r/`.
