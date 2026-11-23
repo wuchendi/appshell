@@ -2,10 +2,12 @@
 
 ## 2026-11-23 — Registry workflow: release deploys
 
-- Pages deployments get a unique build version (`<sha>-<run id>-<attempt>`) through the Pages API
-  instead of `actions/deploy-pages`, which uses the commit SHA: Pages keeps the first deployment
-  of a version, so a release tag on the commit main had just deployed changed nothing. v0.3.1 and
-  v0.4.0 were hit; `/r/` stayed on the previous release.
+- Pitfall: `actions/deploy-pages` deploys under the commit SHA (`pages_build_version`) and Pages
+  keeps the first deployment of a commit. A release tag pushed after main had deployed the same
+  commit reported success but changed nothing, so `/r/` stayed on the previous release (v0.3.1
+  and v0.4.0 were hit). The Pages API rejects a version that is not a commit SHA (404), so the
+  workflow cannot work around it. Releases now push the commit and its tag together
+  (`git push origin main vX.Y.Z`); the main run then already sees the tag.
 - The deployed `/r/` smoke test runs the latest tag's `registry-smoke.sh`; main's script asked the
   previous release for items it does not have.
 
