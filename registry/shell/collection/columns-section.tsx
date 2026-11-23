@@ -1,6 +1,8 @@
+"use client";
+
 import type { ShellColumn } from "@/shell/collection/columns";
 import { hideableColumns } from "@/shell/collection/columns";
-import { useShellLabels } from "@/shell/core/labels";
+import { useShellLabels } from "@/shell/core/labels-context";
 import { MenuSection, MenuSwitch } from "@/shell/menus/menus";
 
 /** The display menu's column switches for a `CollectionTable`. */

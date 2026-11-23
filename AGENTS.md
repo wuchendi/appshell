@@ -11,7 +11,8 @@ exist only for development and the demo. Layout and conventions follow `bkhq/fil
 
 ```text
 registry/shell/   the product (same `@/shell/...` layout as in a host)
-  core/           labels, spaces, panel store, keys, typing guard, row navigation, mobile hook
+  core/           labels, spaces, panel state + prefs cookie, keys, typing guard, row navigation, mobile hook
+  router/         adapters (tanstack.tsx, next.tsx); each installs as `@/shell/router`
   layout/         AppShell, Rail, PageHeader, IconButton, panel parts, NavigationProgress
   menus/          Filter / Display menus, chips, header search
   search/         Cmd/Ctrl+K dialog
@@ -41,7 +42,12 @@ bun run --cwd apps/shell-web dev    # in tmux, never in the foreground
 - **Naming**: exported types carry the `Shell` prefix (React `*Props` exempt; enforced by Biome `useNamingConvention`).
 - **Strings**: every visible string comes from `ShellLabels` (`core/labels.ts`, en and zh). Add a
   key to both languages.
-- **Routing**: TanStack Router; `href` / `to` are plain strings cast at the `Link`.
+- **Routing**: only through `@/shell/router` (`ShellLink`, `useShellPathname`, `useShellNavigate`,
+  `useShellNavigating`); hrefs are plain strings. Both adapters implement the same exports.
+- **Server rendering**: hosts may render on a server (Next.js). Files with hooks, context or
+  components start with `"use client"`; plain modules (labels, prefs, spaces, helpers) stay
+  importable from Server Components. Nothing reads `window`/`document`/storage during render;
+  persisted UI state goes through the prefs cookie.
 - **Files**: a new shipped file goes into its item in `registry.json` (`registry:smoke` catches a
   miss); new npm dependencies go into the item and the demo's `package.json`.
 - **exactOptionalPropertyTypes** is on: optional props a host may pass as `undefined` are typed

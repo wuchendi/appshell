@@ -1,5 +1,5 @@
-import type { LinkProps } from "@tanstack/react-router";
-import { useNavigate } from "@tanstack/react-router";
+"use client";
+
 import type { LucideIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
@@ -11,8 +11,9 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { useShellLabels } from "@/shell/core/labels";
+import { useShellLabels } from "@/shell/core/labels-context";
 import type { ShellSpace } from "@/shell/core/spaces";
+import { useShellNavigate } from "@/shell/router";
 
 /** One hit of the host's search. */
 export interface ShellSearchResult {
@@ -45,7 +46,7 @@ export function SearchDialog({
   limit?: number;
 }) {
   const labels = useShellLabels();
-  const navigate = useNavigate();
+  const navigate = useShellNavigate();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<ShellSearchResult[]>([]);
 
@@ -119,7 +120,7 @@ export function SearchDialog({
                   <CommandItem
                     key={s.key}
                     value={`space:${s.key}`}
-                    onSelect={() => go(() => void navigate({ to: s.href as LinkProps["to"] }))}
+                    onSelect={() => go(() => navigate(s.href))}
                   >
                     <Icon />
                     {s.label}

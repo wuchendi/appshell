@@ -1,3 +1,5 @@
+"use client";
+
 import { cn } from "cn";
 import type { LucideIcon } from "lucide-react";
 import { ChevronDown, PanelLeft } from "lucide-react";
@@ -10,8 +12,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MOD_KEY } from "@/shell/core/keys";
-import { useShellLabels } from "@/shell/core/labels";
-import { useShellPanelStore } from "@/shell/core/panel-store";
+import { useShellLabels } from "@/shell/core/labels-context";
+import { useShellPanel } from "@/shell/core/panel-state";
 import { IconButton } from "@/shell/layout/icon-button";
 import { PAGE_GUTTER, ShellPageContext } from "@/shell/layout/page-context";
 
@@ -23,8 +25,7 @@ function SpaceIcon({ icon: Icon }: { icon: LucideIcon }) {
 function PanelToggle() {
   const labels = useShellLabels();
   const { hasPanel } = use(ShellPageContext);
-  const open = useShellPanelStore(s => s.open);
-  const toggle = useShellPanelStore(s => s.toggle);
+  const { open, toggle } = useShellPanel();
   if (!hasPanel || open) return null;
   return (
     <IconButton

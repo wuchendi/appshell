@@ -1,3 +1,5 @@
+"use client";
+
 import { ScrollArea as ScrollAreaPrimitive } from "@base-ui/react/scroll-area";
 import { cn } from "cn";
 import { ArrowDown, ArrowUp } from "lucide-react";
@@ -14,7 +16,7 @@ import {
   tableMinWidth,
   visibleColumns,
 } from "@/shell/collection/columns";
-import { useShellLabels } from "@/shell/core/labels";
+import { useShellLabels } from "@/shell/core/labels-context";
 import { usePageFill } from "@/shell/core/page-fill";
 import { useIsMobile } from "@/shell/core/use-is-mobile";
 import { SHELL_ROW_ATTR, useRowNavigation } from "@/shell/core/use-row-navigation";

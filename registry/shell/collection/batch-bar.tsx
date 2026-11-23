@@ -1,8 +1,11 @@
+"use client";
+
 import { cn } from "cn";
 import { X } from "lucide-react";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
-import { formatLabel, useShellLabels } from "@/shell/core/labels";
+import { formatLabel } from "@/shell/core/labels";
+import { useShellLabels } from "@/shell/core/labels-context";
 import { usePageFill } from "@/shell/core/page-fill";
 
 /** A thin rule between groups of batch actions. */

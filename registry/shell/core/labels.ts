@@ -1,5 +1,3 @@
-import { createContext, useContext } from "react";
-
 /** Every string the shell shows. Hosts pass their own (e.g. built from i18n) to `<AppShell labels>`. */
 export interface ShellLabels {
   toggleSidebar: string;
@@ -96,13 +94,4 @@ export function formatLabel(label: string, values: Record<string, string | numbe
   return label.replace(/\{(\w+)\}/g, (match, key: string) =>
     key in values ? String(values[key]) : match,
   );
-}
-
-const LabelsContext = createContext<ShellLabels>(shellLabelsEn);
-
-export const ShellLabelsProvider = LabelsContext.Provider;
-
-/** The labels from the nearest `<AppShell>` (English outside one). */
-export function useShellLabels(): ShellLabels {
-  return useContext(LabelsContext);
 }

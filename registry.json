@@ -7,49 +7,89 @@
       "name": "shell-core",
       "type": "registry:lib",
       "title": "App shell: core",
-      "description": "Labels (en/zh) and their provider, space definitions and path matching, the persisted panel state, the typing guard for bare-key shortcuts, J/K row navigation and the mobile breakpoint hook.",
-      "dependencies": ["zustand", "lucide-react"],
+      "description": "Labels (en/zh) and their context, space definitions and path matching, the panel state context and its prefs cookie, the typing guard for bare-key shortcuts, J/K row navigation and the mobile breakpoint hook.",
+      "dependencies": ["lucide-react"],
       "registryDependencies": [],
       "files": [
         {
           "path": "registry/shell/core/labels.ts",
           "type": "registry:file",
-          "target": "~/src/shell/core/labels.ts"
+          "target": "shell/core/labels.ts"
+        },
+        {
+          "path": "registry/shell/core/labels-context.ts",
+          "type": "registry:file",
+          "target": "shell/core/labels-context.ts"
         },
         {
           "path": "registry/shell/core/spaces.ts",
           "type": "registry:file",
-          "target": "~/src/shell/core/spaces.ts"
-        },
-        {
-          "path": "registry/shell/core/panel-store.ts",
-          "type": "registry:file",
-          "target": "~/src/shell/core/panel-store.ts"
+          "target": "shell/core/spaces.ts"
         },
         {
           "path": "registry/shell/core/is-typing.ts",
           "type": "registry:file",
-          "target": "~/src/shell/core/is-typing.ts"
+          "target": "shell/core/is-typing.ts"
         },
         {
           "path": "registry/shell/core/use-row-navigation.ts",
           "type": "registry:file",
-          "target": "~/src/shell/core/use-row-navigation.ts"
+          "target": "shell/core/use-row-navigation.ts"
         },
         {
           "path": "registry/shell/core/use-is-mobile.ts",
           "type": "registry:file",
-          "target": "~/src/shell/core/use-is-mobile.ts"
+          "target": "shell/core/use-is-mobile.ts"
         },
         {
           "path": "registry/shell/core/keys.ts",
           "type": "registry:file",
-          "target": "~/src/shell/core/keys.ts"
+          "target": "shell/core/keys.ts"
         },
         {
           "path": "registry/shell/core/page-fill.ts",
           "type": "registry:file",
-          "target": "~/src/shell/core/page-fill.ts"
+          "target": "shell/core/page-fill.ts"
+        },
+        {
+          "path": "registry/shell/core/panel-state.ts",
+          "type": "registry:file",
+          "target": "shell/core/panel-state.ts"
+        },
+        {
+          "path": "registry/shell/core/prefs.ts",
+          "type": "registry:file",
+          "target": "shell/core/prefs.ts"
+        }
+      ]
+    },
+    {
+      "name": "shell-router-tanstack",
+      "type": "registry:lib",
+      "title": "App shell: TanStack Router adapter",
+      "description": "Routing for the shell on TanStack Router: ShellLink, useShellPathname, useShellNavigate, useShellNavigating. Install this or shell-router-next.",
+      "dependencies": ["@tanstack/react-router"],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "registry/shell/router/tanstack.tsx",
+          "type": "registry:file",
+          "target": "shell/router.tsx"
+        }
+      ]
+    },
+    {
+      "name": "shell-router-next",
+      "type": "registry:lib",
+      "title": "App shell: Next.js adapter",
+      "description": "Routing for the shell on Next.js (App Router): ShellLink, useShellPathname, useShellNavigate, useShellNavigating. Install this or shell-router-tanstack.",
+      "dependencies": ["next"],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "registry/shell/router/next.tsx",
+          "type": "registry:file",
+          "target": "shell/router.tsx"
         }
       ]
     },
@@ -58,7 +98,7 @@
       "type": "registry:block",
       "title": "App shell: layout",
       "description": "<AppShell>: an icon rail on a canvas, one rounded content card with a resizable, foldable space panel per space, a mobile sheet, Cmd/Ctrl+B / Cmd/Ctrl+K / C shortcuts and a navigation progress bar. Plus the one-row <PageHeader>, <IconButton> and the panel building blocks (PanelFrame, PanelSection, PanelRow, PanelAllRow).",
-      "dependencies": ["@tanstack/react-router", "react-resizable-panels", "cn", "lucide-react"],
+      "dependencies": ["react-resizable-panels", "cn", "lucide-react"],
       "registryDependencies": [
         "button",
         "tooltip",
@@ -83,42 +123,42 @@
         {
           "path": "registry/shell/layout/app-shell.tsx",
           "type": "registry:file",
-          "target": "~/src/shell/layout/app-shell.tsx"
+          "target": "shell/layout/app-shell.tsx"
         },
         {
           "path": "registry/shell/layout/rail.tsx",
           "type": "registry:file",
-          "target": "~/src/shell/layout/rail.tsx"
+          "target": "shell/layout/rail.tsx"
         },
         {
           "path": "registry/shell/layout/panel.tsx",
           "type": "registry:file",
-          "target": "~/src/shell/layout/panel.tsx"
+          "target": "shell/layout/panel.tsx"
         },
         {
           "path": "registry/shell/layout/page-header.tsx",
           "type": "registry:file",
-          "target": "~/src/shell/layout/page-header.tsx"
+          "target": "shell/layout/page-header.tsx"
         },
         {
           "path": "registry/shell/layout/icon-button.tsx",
           "type": "registry:file",
-          "target": "~/src/shell/layout/icon-button.tsx"
+          "target": "shell/layout/icon-button.tsx"
         },
         {
           "path": "registry/shell/layout/navigation-progress.tsx",
           "type": "registry:file",
-          "target": "~/src/shell/layout/navigation-progress.tsx"
+          "target": "shell/layout/navigation-progress.tsx"
         },
         {
           "path": "registry/shell/layout/page-context.ts",
           "type": "registry:file",
-          "target": "~/src/shell/layout/page-context.ts"
+          "target": "shell/layout/page-context.ts"
         },
         {
           "path": "registry/shell/layout/page-body.tsx",
           "type": "registry:file",
-          "target": "~/src/shell/layout/page-body.tsx"
+          "target": "shell/layout/page-body.tsx"
         }
       ]
     },
@@ -133,7 +173,7 @@
         {
           "path": "registry/shell/menus/menus.tsx",
           "type": "registry:file",
-          "target": "~/src/shell/menus/menus.tsx"
+          "target": "shell/menus/menus.tsx"
         }
       ]
     },
@@ -156,37 +196,37 @@
         {
           "path": "registry/shell/collection/columns.ts",
           "type": "registry:file",
-          "target": "~/src/shell/collection/columns.ts"
+          "target": "shell/collection/columns.ts"
         },
         {
           "path": "registry/shell/collection/collection-table.tsx",
           "type": "registry:file",
-          "target": "~/src/shell/collection/collection-table.tsx"
+          "target": "shell/collection/collection-table.tsx"
         },
         {
           "path": "registry/shell/collection/batch-bar.tsx",
           "type": "registry:file",
-          "target": "~/src/shell/collection/batch-bar.tsx"
+          "target": "shell/collection/batch-bar.tsx"
         },
         {
           "path": "registry/shell/collection/columns-section.tsx",
           "type": "registry:file",
-          "target": "~/src/shell/collection/columns-section.tsx"
+          "target": "shell/collection/columns-section.tsx"
         },
         {
           "path": "registry/shell/collection/pager.ts",
           "type": "registry:file",
-          "target": "~/src/shell/collection/pager.ts"
+          "target": "shell/collection/pager.ts"
         },
         {
           "path": "registry/shell/collection/use-collection-page.ts",
           "type": "registry:file",
-          "target": "~/src/shell/collection/use-collection-page.ts"
+          "target": "shell/collection/use-collection-page.ts"
         },
         {
           "path": "registry/shell/collection/collection-pager.tsx",
           "type": "registry:file",
-          "target": "~/src/shell/collection/collection-pager.tsx"
+          "target": "shell/collection/collection-pager.tsx"
         }
       ]
     },
@@ -195,13 +235,13 @@
       "type": "registry:block",
       "title": "App shell: search dialog",
       "description": "Cmd/Ctrl+K dialog over the host's own search function (debounced, aborted when superseded) plus a Go to list of the spaces.",
-      "dependencies": ["@tanstack/react-router", "lucide-react"],
+      "dependencies": ["lucide-react"],
       "registryDependencies": ["command", "@cdlab/shell-core"],
       "files": [
         {
           "path": "registry/shell/search/search-dialog.tsx",
           "type": "registry:file",
-          "target": "~/src/shell/search/search-dialog.tsx"
+          "target": "shell/search/search-dialog.tsx"
         }
       ]
     },
@@ -216,7 +256,7 @@
         {
           "path": "registry/shell/intro/feature-intro.tsx",
           "type": "registry:file",
-          "target": "~/src/shell/intro/feature-intro.tsx"
+          "target": "shell/intro/feature-intro.tsx"
         }
       ]
     }

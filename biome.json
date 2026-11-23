@@ -103,6 +103,16 @@
       }
     },
     {
+      "includes": ["registry/shell/router/*.tsx"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useComponentExportOnlyModules": "off"
+          }
+        }
+      }
+    },
+    {
       "includes": ["**/*.test.{ts,tsx}"],
       "linter": {
         "rules": {

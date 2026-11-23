@@ -3,6 +3,7 @@
     "target": "esnext",
     "lib": ["esnext", "dom", "dom.iterable"],
     "module": "preserve",
+    "jsx": "react-jsx",
     "moduleResolution": "bundler",
     "types": ["bun"],
     "strict": true,
@@ -15,5 +16,5 @@
     "skipLibCheck": true,
     "paths": { "@/shell/*": ["./registry/shell/*"], "@/*": ["./apps/shell-web/src/*"] }
   },
-  "include": ["registry/shell/core", "scripts"]
+  "include": ["registry/shell/core", "registry/shell/router/next.tsx", "scripts"]
 }

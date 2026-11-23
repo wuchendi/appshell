@@ -21,6 +21,7 @@ export default defineConfig({
   resolve: {
     // `@/shell` mirrors where `shadcn add` places the registry files in a host app.
     alias: [
+      { find: /^@\/shell\/router$/, replacement: `${registry}/router/tanstack.tsx` },
       { find: /^@\/shell\//, replacement: `${registry}/` },
       { find: /^@\//, replacement: `${resolve(import.meta.dirname, "src")}/` },
     ],

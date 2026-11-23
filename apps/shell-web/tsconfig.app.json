@@ -7,6 +7,7 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "paths": {
+      "@/shell/router": ["../../registry/shell/router/tanstack.tsx"],
       "@/shell/*": ["../../registry/shell/*"],
       "@/*": ["./src/*"]
     },
@@ -22,5 +23,5 @@
     "skipLibCheck": true
   },
   "include": ["src", "../../registry/shell"],
-  "exclude": ["../../registry/**/*.test.ts"]
+  "exclude": ["../../registry/**/*.test.ts", "../../registry/shell/router/next.tsx"]
 }

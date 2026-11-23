@@ -1,3 +1,5 @@
+"use client";
+
 import type { RefObject } from "react";
 import { useEffect } from "react";
 import { isTypingTarget } from "@/shell/core/is-typing";

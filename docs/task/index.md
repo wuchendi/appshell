@@ -9,3 +9,4 @@
 | [x] | Switch ESLint to Biome | — |
 | [x] | azctl-requirements — fill pages, paged tables, panel tones, host canvas (v0.3.0) | docs/plan/202611230300-azctl-requirements.md |
 | [x] | collection-table-layout — clipped cells, taller rows, wide tables (v0.3.1) | docs/plan/202611230400-collection-table-layout.md |
+| [x] | nextjs-support — router adapters, RSC boundary, cookie-backed prefs, Next smoke (v0.4.0) | docs/plan/202611230629-nextjs-support.md |
