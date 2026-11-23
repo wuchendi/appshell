@@ -1,5 +1,35 @@
 # Changelog
 
+## 2026-11-23 — v0.4.1
+
+Requested by wepush (projects `docs/appshell-requirements.md`, R1–R8), the first Next.js host.
+
+- **Rail** (R1): an entry folds/unfolds the panel only when its space has a panel and its `href`
+  is the current page; from a detail page it navigates back to `href`, and a space without a panel
+  always navigates. Before, any click on the current entry toggled the (possibly invisible) panel
+  and wrote the cookie. New pure `railEntryFolds`; `Rail` takes `hasPanel`.
+- **CollectionTable** (R2): a row opens only on clicks inside its own DOM, so menus and dialogs
+  portaled from `rowActions` / `renderSubRow` no longer open it (React bubbles their clicks through
+  the portal). New pure `opensRow`; `ROW_INTERACTIVE` is internal and drops the popover selector.
+- **CollectionTable** (R3): row checkboxes are named "Select {name}" from the new `getRowLabel`,
+  else a text primary cell, else the id (pure `rowLabel`).
+- **Shortcuts** (R4): bare `C`, `/` and J/K skip IME composition and focus inside a modal dialog
+  (`[role=dialog][aria-modal=true]`, `[role=alertdialog]`), via the new `isBareKeyBlocked`.
+- **SearchDialog** (R5): shows `labels.loading` while a search is pending instead of "Nothing
+  found"; a rejected search clears the results and shows `labels.searchFailed`; results of an
+  aborted search are dropped.
+- **Columns** (R6): `ShellColumn.label` names a column with a non-text `header` in the display menu
+  (pure `columnLabel`).
+- **PageHeader** (R7): `PAGE_TOP` / `PAGE_TOP_BLEED` / `PAGE_GUTTER_BLEED` in `page-context.ts`
+  keep the page padding and the sticky header's negative margins in one place.
+- **Docs** (R8): README notes on monorepo hosts (workspace UI package, `cn` never rewritten) and an
+  Upgrade section on shadcn's overwrite prompts. `registry:smoke` re-adds an item over an edited UI
+  component and checks the edit survives.
+- **Breaking** for hosts with their own `ShellLabels`: add `selectRow` and `searchFailed`.
+- Measured (R8): without `--overwrite`, `shadcn add` skips identical files and prompts (default
+  no) for every differing file, shell or UI, even with `-y`; with no terminal it stops at the first
+  prompt and writes nothing; `--overwrite` replaces edited UI components too.
+
 ## 2026-11-23 — Registry workflow: release deploys
 
 - Pitfall: `actions/deploy-pages` deploys under the commit SHA (`pages_build_version`) and Pages
