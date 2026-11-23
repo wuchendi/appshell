@@ -5,7 +5,7 @@ import type { ShellNewAction } from "@/shell/layout/rail";
 import { useRouterState } from "@tanstack/react-router";
 import { Menu } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { useDefaultLayout } from "react-resizable-panels";
+import { useDefaultLayout, usePanelRef } from "react-resizable-panels";
 import { Button } from "@/components/ui/button";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -66,13 +66,18 @@ export function AppShell({
   });
   const panelOpen = useShellPanelStore(s => s.open);
   const togglePanel = useShellPanelStore(s => s.toggle);
+  const setOpen = useShellPanelStore(s => s.setOpen);
   const [navOpen, setNavOpen] = useState(false);
   const isMobile = useIsMobile();
   const pressAtRef = useRef<number | null>(null);
+  const panelRef = usePanelRef();
+  const [animating, setAnimating] = useState(false);
+  const openRef = useRef(panelOpen);
 
   const space = spaceFor(spaces, pathname);
   const Panel = space ? panels[space.key] : undefined;
-  const showPanel = !!Panel && panelOpen && !isMobile;
+  // The panel stays mounted while folded (collapsed to 0) so folding can animate.
+  const showPanel = !!Panel && !isMobile;
   // One saved panel width for every space; the page-only layout is kept apart.
   const layout = useDefaultLayout({
     id: layoutId,
@@ -85,6 +90,28 @@ export function AppShell({
   // Close the mobile sheet once something in it has navigated.
 
   useEffect(() => setNavOpen(false), [pathname]);
+
+  // Follow the stored open state; only a change after mount animates.
+  useEffect(() => {
+    const panel = panelRef.current;
+    if (!panel)
+      return;
+    if (openRef.current !== panelOpen) {
+      openRef.current = panelOpen;
+      setAnimating(true);
+    }
+    if (panelOpen && panel.isCollapsed())
+      panel.expand();
+    else if (!panelOpen && !panel.isCollapsed())
+      panel.collapse();
+  }, [panelOpen, showPanel, panelRef]);
+
+  useEffect(() => {
+    if (!animating)
+      return;
+    const timer = setTimeout(setAnimating, 200, false);
+    return () => clearTimeout(timer);
+  }, [animating]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -152,17 +179,37 @@ export function AppShell({
               orientation="horizontal"
               defaultLayout={layout.defaultLayout}
               onLayoutChanged={layout.onLayoutChanged}
-              className="min-h-0 min-w-0 flex-1"
+              className={`min-h-0 min-w-0 flex-1 ${animating ? "[&>[data-panel]]:transition-[flex-grow] [&>[data-panel]]:duration-200 [&>[data-panel]]:ease-out" : ""}`}
             >
               {/* Panel and handle come and go in front of the page, which keeps its position so folding never remounts it. */}
               {showPanel && (
-                <ResizablePanel id="panel" defaultSize="240px" minSize="200px" maxSize="400px" className="min-w-0">
-                  <Panel />
+                <ResizablePanel
+                  id="panel"
+                  panelRef={panelRef}
+                  defaultSize="240px"
+                  minSize="200px"
+                  maxSize="400px"
+                  collapsible
+                  collapsedSize={0}
+                  onResize={(size) => {
+                    // Dragging past the minimum folds the panel too.
+                    if (size.inPixels === 0 && useShellPanelStore.getState().open) {
+                      openRef.current = false;
+                      setOpen(false);
+                    }
+                  }}
+                  className="min-w-0 overflow-hidden!"
+                >
+                  {/* Keeps its width while the panel slides, so nothing reflows. */}
+                  <div className="h-full w-full min-w-[200px]">
+                    <Panel />
+                  </div>
                 </ResizablePanel>
               )}
               {showPanel && (
                 <ResizableHandle
-                  withHandle
+                  withHandle={panelOpen}
+                  className={panelOpen ? undefined : "pointer-events-none opacity-0"}
                   title={labels.toggleSidebar}
                   onPointerDown={(e) => {
                     pressAtRef.current = e.clientX;

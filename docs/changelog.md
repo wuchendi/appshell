@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- The space panel folds and unfolds with a 200ms width transition; it stays mounted (collapsed to
+  0) while folded, and dragging it below its minimum folds it too.
+
 ## 2026-11-22 — v0.2.0
 
 - `shell-collection`: `CollectionTable`, `BatchBar`, `ColumnsSection`, `ShellColumn` and the
