@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-11-23 — Registry workflow: release deploys
+
+- Pages deployments get a unique build version (`<sha>-<run id>-<attempt>`) through the Pages API
+  instead of `actions/deploy-pages`, which uses the commit SHA: Pages keeps the first deployment
+  of a version, so a release tag on the commit main had just deployed changed nothing. v0.3.1 and
+  v0.4.0 were hit; `/r/` stayed on the previous release.
+- The deployed `/r/` smoke test runs the latest tag's `registry-smoke.sh`; main's script asked the
+  previous release for items it does not have.
+
 ## 2026-11-23 — v0.4.0
 
 Next.js support (App Router, server rendered) next to TanStack Router. Breaking, no compatibility
