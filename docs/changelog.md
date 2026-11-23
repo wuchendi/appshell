@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2026-11-23 — v0.2.1
 
 - The space panel folds and unfolds with a 200ms width transition; it stays mounted (collapsed to
   0) while folded, and dragging it below its minimum folds it too.
@@ -17,7 +17,7 @@
 - `ShellLabels` gains `selectedCount`, `selectAll`, `deselectAll`, `clearSelection`, `columns`;
   hosts that build their own labels must add them.
 
-## 2026-11-22
+## 2026-11-22 — v0.1.0
 
 - Namespace and package scope are `@cdlab` (items `@cdlab/shell-*`); the repository and Pages stay
   under `wuchendi`.
