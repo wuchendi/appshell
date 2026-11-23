@@ -89,18 +89,17 @@ export function AppShell({
   // biome-ignore lint/correctness/useExhaustiveDependencies: a navigation is the trigger
   useEffect(() => setNavOpen(false), [pathname]);
 
-  // Follow the stored open state; only a change after mount animates.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: re-run when the panel (and its ref) mounts
+  // Animate a toggle of the stored open state. A panel that mounts later lines itself up
+  // in `onResize` instead: its group does not know it before that first call.
   useEffect(() => {
+    if (openRef.current === panelOpen) return;
+    openRef.current = panelOpen;
     const panel = panelRef.current;
     if (!panel) return;
-    if (openRef.current !== panelOpen) {
-      openRef.current = panelOpen;
-      setAnimating(true);
-    }
-    if (panelOpen && panel.isCollapsed()) panel.expand();
-    else if (!panelOpen && !panel.isCollapsed()) panel.collapse();
-  }, [panelOpen, showPanel, panelRef]);
+    setAnimating(true);
+    if (panelOpen) panel.expand();
+    else panel.collapse();
+  }, [panelOpen, panelRef]);
 
   useEffect(() => {
     if (!animating) return;
@@ -190,9 +189,15 @@ export function AppShell({
                   maxSize="400px"
                   collapsible
                   collapsedSize={0}
-                  onResize={size => {
-                    // Dragging past the minimum folds the panel too.
-                    if (size.inPixels === 0 && useShellPanelStore.getState().open) {
+                  onResize={(size, _id, prev) => {
+                    const { open } = useShellPanelStore.getState();
+                    const folded = size.inPixels === 0;
+                    if (prev === undefined) {
+                      // Just mounted: follow the stored state over the saved layout.
+                      if (open && folded) panelRef.current?.expand();
+                      else if (!open && !folded) panelRef.current?.collapse();
+                    } else if (open && folded) {
+                      // Dragging past the minimum folds the panel too.
                       openRef.current = false;
                       setOpen(false);
                     }

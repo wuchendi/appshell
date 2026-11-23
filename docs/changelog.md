@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Fix: a space panel that mounts after the shell (navigating from a space without one, or a space
+  that appears later) crashed with "Panel constraints not found"; it now lines up with the stored
+  open state on its first resize.
+
 ## 2026-11-23 — v0.2.1
 
 - The space panel folds and unfolds with a 200ms width transition; it stays mounted (collapsed to
