@@ -1,5 +1,38 @@
 # Changelog
 
+## Unreleased
+
+Requested by Posera (posewear-next `docs/appshell-feedback.md`, items 1–6): Next.js 16 with
+next-intl `/[locale]/…` routes, prerendered as static HTML.
+
+- **TanStack router adapter**: `useShellPathname` reads the router's `resolvedLocation` (falling
+  back to `location` before the first load). `location` names a pending navigation's target at
+  once, while the host's `<Outlet>` keeps the old page until the new route's code split chunk,
+  `beforeLoad` or `loader` settles, so the rail highlight and the space panel switched ahead of the
+  page on a slow navigation (seen in bks). They now switch with it, as the Next.js adapter's
+  `usePathname` already did. The demo routes are synchronous and never showed it.
+- **SearchDialog** (1): a result's `detail` carries `data-slot="command-shortcut"`, which hides
+  `CommandItem`'s check icon; its `ml-auto` had split the free space and left the detail mid-row.
+- **SearchDialog** (2): `ShellSearchResult.media` (a node, `size-8`) replaces `icon` for
+  thumbnails and avatars.
+- **PanelRow** (3): `count` takes a node too; a number still hides at 0.
+- **AppShell** (4): `prefs="client"` for statically prerendered hosts renders the defaults, then
+  applies the cookie in a layout effect after hydration, without the fold animation. The fold
+  animation became a layout effect too and waits out a pending restore, so React's StrictMode
+  re-run of the first effects does not slide the panel. Omitted `prefs` still reads the cookie
+  while rendering (client-only hosts).
+- **Docs** (5): locale-prefixed routes need no shell change: the Next adapter takes `Link`,
+  `usePathname` and `useRouter` from the host's next-intl `createNavigation()` module (README).
+- **Lint** (6): `registry/shell` passes Biome's recommended preset with the `react` and `next`
+  domains. Test files drop `!`, `collection-table.tsx` documents its ARIA roles on grid `div`s
+  with file-level suppressions, and appshell's own config no longer turns `noNonNullAssertion`
+  off and lints the `next` domain.
+- Not breaking: `media`, `count` and `prefs` only widen their types.
+- **Style**: the formatter follows the hosts (posewear-next, projects): single quotes, semicolons
+  as needed, Biome's default 80-column width and arrow parentheses. Every shipped file is
+  reformatted once; a host on the same style can now take the registry files as they are, and
+  README samples follow too.
+
 ## 2026-11-23 — v0.4.1
 
 Requested by wepush (projects `docs/appshell-requirements.md`, R1–R8), the first Next.js host.

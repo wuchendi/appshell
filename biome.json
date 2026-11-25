@@ -40,7 +40,8 @@
   "linter": {
     "enabled": true,
     "domains": {
-      "react": "recommended"
+      "react": "recommended",
+      "next": "recommended"
     },
     "rules": {
       "preset": "recommended",
@@ -54,8 +55,7 @@
             "style": "separatedType"
           }
         },
-        "useComponentExportOnlyModules": "error",
-        "noNonNullAssertion": "off"
+        "useComponentExportOnlyModules": "error"
       },
       "suspicious": {
         "noConsole": "warn"
@@ -89,17 +89,6 @@
                 ]
               }
             }
-          }
-        }
-      }
-    },
-    {
-      "includes": ["registry/shell/collection/collection-table.tsx"],
-      "linter": {
-        "rules": {
-          "a11y": {
-            "useSemanticElements": "off",
-            "useFocusableInteractive": "off"
           }
         }
       }

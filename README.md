@@ -146,17 +146,32 @@ export default async function RootLayout({
 }
 ```
 
-Reading cookies makes the routes under that layout dynamic. Every shipped component is a client
+Reading cookies makes the routes under that layout dynamic. A statically prerendered host has no
+request cookies: pass `prefs="client"` instead, and the shell renders the defaults, then applies the
+cookie right after hydration without the fold animation. Every shipped component is a client
 component; `@/shell/core/labels`, `prefs`, `spaces` and the collection helpers are plain modules a
 Server Component can import.
 
 - **Spaces** are the rail entries. A space with a component in `panels` gets a panel beside its
   pages; folding never remounts the page. Whether the panel is open and its width (one for every
   space) live in the `appshell` cookie (`readShellPrefs` / `shellPrefsCookie`); without a `prefs`
-  prop the shell reads `document.cookie`. `useShellPanel()` gives the open state and its setters.
+  prop the shell reads `document.cookie` while rendering (client-only hosts), and with
+  `prefs="client"` right after hydration (static hosts). `useShellPanel()` gives the open state and its setters.
   A rail entry navigates to its space's `href`; only when that page is already shown and the space
   has a panel does the click fold or unfold the panel instead. From a detail page below `href` the
   entry goes back to `href`, and a space without a panel always navigates.
+- **Locale-prefixed routes** (next-intl `/[locale]/…`): hrefs stay plain app paths. In your copy of
+  `@/shell/router` (the Next adapter), take `Link`, `usePathname` and `useRouter` from your
+  `createNavigation()` module instead of Next, so paths lose the locale on the way in and gain it on
+  the way out:
+
+  ```ts
+  import { useLinkStatus } from 'next/link'
+  import { Link as NextLink, usePathname, useRouter } from '@/i18n/navigation'
+  ```
+
+  Active states, `navigate()`, rail and panel links then work on `/studio` while the browser is on
+  `/zh/studio`. Re-apply the import after each `shadcn add`.
 - **Shortcuts**: Cmd/Ctrl+B folds the panel, Cmd/Ctrl+K calls `onSearch`, a bare `C` runs
   `newAction`. The panel edge folds the panel too. Bare keys (`C`, `/` in `HeaderSearch`, J/K)
   do nothing while typing, during IME composition or with focus in a modal dialog.

@@ -137,7 +137,8 @@ export function PanelRow({
   dot?: ShellDotTone
   /** Reserve the marker slot when there is no `icon` or `dot`, so text lines up with rows that have one. */
   inset?: boolean
-  count?: number
+  /** Right-aligned count; a number hides at 0, a node (e.g. an animated number) always shows. */
+  count?: ReactNode
   title?: string
   /** Right-click menu entries for the row. */
   menu?: ReactNode
@@ -160,7 +161,7 @@ export function PanelRow({
         inset && <span aria-hidden="true" className="size-4 shrink-0" />
       )}
       <span className="min-w-0 flex-1 truncate">{children}</span>
-      {count !== undefined && count > 0 && (
+      {(typeof count === 'number' ? count > 0 : count != null) && (
         <span className="ml-auto shrink-0 text-[12px] text-muted-foreground/70 tabular-nums">
           {count}
         </span>

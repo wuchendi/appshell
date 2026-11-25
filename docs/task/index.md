@@ -11,3 +11,4 @@
 | [x] | collection-table-layout — clipped cells, taller rows, wide tables (v0.3.1) | docs/plan/202611230400-collection-table-layout.md |
 | [x] | nextjs-support — router adapters, RSC boundary, cookie-backed prefs, Next smoke (v0.4.0) | docs/plan/202611230629-nextjs-support.md |
 | [x] | wepush-requirements — rail fold, portaled row clicks, row checkbox name, bare-key guard, search pending, column label, page top, monorepo docs (v0.4.1) | docs/plan/202611230840-wepush-requirements.md |
+| [-] | posera-feedback — search detail and media, node counts, client prefs, next-intl recipe, Biome recommended, TanStack resolved pathname (v0.4.2) | docs/plan/202611250900-posera-feedback.md |

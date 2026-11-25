@@ -51,7 +51,7 @@ describe('shell prefs', () => {
     expect(cookie).toStartWith(`${SHELL_PREFS_COOKIE}=0:18.25;`)
     expect(cookie).toContain('Path=/')
     expect(cookie).toContain('SameSite=Lax')
-    expect(readShellPrefs(cookie.split(';')[0]!)).toEqual({
+    expect(readShellPrefs(cookie.slice(0, cookie.indexOf(';')))).toEqual({
       panelOpen: false,
       panelSize: 18.25,
     })

@@ -1,6 +1,7 @@
 'use client'
 
 import type { LucideIcon } from 'lucide-react'
+import type { ReactNode } from 'react'
 import { useEffect, useState } from 'react'
 import {
   Command,
@@ -22,6 +23,8 @@ export interface ShellSearchResult {
   /** Muted text on the right, e.g. a short URL. */
   detail?: string
   icon?: LucideIcon
+  /** A thumbnail or avatar in place of `icon`, sized `size-8` so rows stay even. */
+  media?: ReactNode
   onSelect: () => void
 }
 
@@ -126,10 +129,15 @@ export function SearchDialog({
                     value={`result:${r.id}`}
                     onSelect={() => go(r.onSelect)}
                   >
-                    {Icon && <Icon />}
+                    {r.media ?? (Icon && <Icon />)}
                     <span className="truncate">{r.label}</span>
                     {r.detail && (
-                      <span className="ml-auto truncate font-mono text-xs text-muted-foreground">
+                      // The shortcut slot hides CommandItem's check icon, whose `ml-auto` would
+                      // otherwise split the free space and leave the detail mid-row.
+                      <span
+                        data-slot="command-shortcut"
+                        className="ml-auto truncate font-mono text-xs text-muted-foreground"
+                      >
                         {r.detail}
                       </span>
                     )}
