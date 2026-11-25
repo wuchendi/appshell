@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2026-11-25 — v0.4.2
 
 Requested by Posera (posewear-next `docs/appshell-feedback.md`, items 1–6): Next.js 16 with
 next-intl `/[locale]/…` routes, prerendered as static HTML.

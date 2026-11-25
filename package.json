@@ -1,6 +1,6 @@
 {
   "name": "@cdlab/appshell",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "private": true,
   "description": "A dashboard app shell (rail, content card, space panels, page header, list menus, search dialog, intro) shipped as a shadcn registry under @cdlab.",
   "homepage": "https://github.com/wuchendi/appshell",

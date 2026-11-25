@@ -1,6 +1,6 @@
 # Posera feedback and the TanStack pathname (v0.4.2)
 
-## Status: implemented, not released
+## Status: completed
 
 - **createdAt**: 2026-11-25
 - **approvedAt**: 2026-11-25
