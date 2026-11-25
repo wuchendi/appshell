@@ -23,5 +23,8 @@
     "skipLibCheck": true
   },
   "include": ["src", "../../registry/shell"],
-  "exclude": ["../../registry/**/*.test.ts", "../../registry/shell/router/next.tsx"]
+  "exclude": [
+    "../../registry/**/*.test.ts",
+    "../../registry/shell/router/next.tsx"
+  ]
 }

@@ -14,7 +14,14 @@
     "allowImportingTsExtensions": true,
     "noEmit": true,
     "skipLibCheck": true,
-    "paths": { "@/shell/*": ["./registry/shell/*"], "@/*": ["./apps/shell-web/src/*"] }
+    "paths": {
+      "@/shell/*": ["./registry/shell/*"],
+      "@/*": ["./apps/shell-web/src/*"]
+    }
   },
-  "include": ["registry/shell/core", "registry/shell/router/next.tsx", "scripts"]
+  "include": [
+    "registry/shell/core",
+    "registry/shell/router/next.tsx",
+    "scripts"
+  ]
 }

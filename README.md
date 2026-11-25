@@ -61,26 +61,34 @@ another color:
 ## Use
 
 ```tsx
-import { Boxes, Gauge, Settings } from "lucide-react";
-import { shellLabelsZh } from "@/shell/core/labels";
-import { AppShell } from "@/shell/layout/app-shell";
-import { PageHeader } from "@/shell/layout/page-header";
-import { PanelFrame, PanelRow, PanelSection } from "@/shell/layout/panel";
+import { Boxes, Gauge, Settings } from 'lucide-react'
+import { shellLabelsZh } from '@/shell/core/labels'
+import { AppShell } from '@/shell/layout/app-shell'
+import { PageHeader } from '@/shell/layout/page-header'
+import { PanelFrame, PanelRow, PanelSection } from '@/shell/layout/panel'
 
 const spaces = [
-  { key: "overview", href: "/", label: "Overview", icon: Gauge, exact: true },
-  { key: "items", href: "/items", label: "Items", icon: Boxes },
-  { key: "settings", href: "/settings", label: "Settings", icon: Settings, footer: true },
-];
+  { key: 'overview', href: '/', label: 'Overview', icon: Gauge, exact: true },
+  { key: 'items', href: '/items', label: 'Items', icon: Boxes },
+  {
+    key: 'settings',
+    href: '/settings',
+    label: 'Settings',
+    icon: Settings,
+    footer: true,
+  },
+]
 
 function ItemsPanel() {
   return (
     <PanelFrame title="Items">
       <PanelSection label="Views">
-        <PanelRow href="/items" icon={Boxes} active>All items</PanelRow>
+        <PanelRow href="/items" icon={Boxes} active>
+          All items
+        </PanelRow>
       </PanelSection>
     </PanelFrame>
-  );
+  )
 }
 
 // TanStack Router: the root route's component.
@@ -94,16 +102,20 @@ export function Shell() {
       logoLabel="My app"
       account={<AccountMenu />}
       labels={shellLabelsZh}
-      newAction={{ label: "New item", onSelect: openCreate }}
+      newAction={{ label: 'New item', onSelect: openCreate }}
       onSearch={() => setSearchOpen(true)}
     >
       <Outlet />
     </AppShell>
-  );
+  )
 }
 
 // Every page starts with the one-row header.
-<PageHeader title="Items" tools={<FilterMenu … />} actions={<DisplayMenu …>…</DisplayMenu>} />;
+<PageHeader
+  title="Items"
+  tools={<FilterMenu … />}
+  actions={<DisplayMenu …>…</DisplayMenu>}
+/>
 ```
 
 Next.js (App Router): `AppShell` takes components and functions, so render it from a client
@@ -111,20 +123,26 @@ component, and read the prefs cookie in the server layout so the first render ma
 
 ```tsx
 // app/layout.tsx (Server Component)
-import { cookies } from "next/headers";
-import { shellLabelsZh } from "@/shell/core/labels";
-import { readShellPrefs } from "@/shell/core/prefs";
-import { Shell } from "./shell"; // "use client": the <AppShell> above, plus `prefs` and `labels` props
+import { cookies } from 'next/headers'
+import { shellLabelsZh } from '@/shell/core/labels'
+import { readShellPrefs } from '@/shell/core/prefs'
+import { Shell } from './shell' // "use client": the <AppShell> above, plus `prefs` and `labels` props
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const prefs = readShellPrefs((await cookies()).toString());
+export default async function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  const prefs = readShellPrefs((await cookies()).toString())
   return (
     <html lang="zh">
       <body>
-        <Shell prefs={prefs} labels={shellLabelsZh}>{children}</Shell>
+        <Shell prefs={prefs} labels={shellLabelsZh}>
+          {children}
+        </Shell>
       </body>
     </html>
-  );
+  )
 }
 ```
 

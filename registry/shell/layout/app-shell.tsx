@@ -1,71 +1,84 @@
-"use client";
+'use client'
 
-import { Menu } from "lucide-react";
-import type { ComponentType, ReactNode } from "react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { usePanelRef } from "react-resizable-panels";
-import { Button } from "@/components/ui/button";
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { isBareKeyBlocked } from "@/shell/core/is-typing";
-import type { ShellLabels } from "@/shell/core/labels";
-import { shellLabelsEn } from "@/shell/core/labels";
-import { ShellLabelsContext } from "@/shell/core/labels-context";
-import { ShellPanelContext } from "@/shell/core/panel-state";
-import type { ShellPrefs } from "@/shell/core/prefs";
-import { readShellPrefs, shellPrefsCookie } from "@/shell/core/prefs";
-import type { ShellSpace } from "@/shell/core/spaces";
-import { spaceFor } from "@/shell/core/spaces";
-import { useIsMobile } from "@/shell/core/use-is-mobile";
-import { NavigationProgress } from "@/shell/layout/navigation-progress";
-import { PAGE_GUTTER, PAGE_TOP, ShellPageContext } from "@/shell/layout/page-context";
-import type { ShellNewAction } from "@/shell/layout/rail";
-import { Rail } from "@/shell/layout/rail";
-import { useShellPathname } from "@/shell/router";
+import { Menu } from 'lucide-react'
+import type { ComponentType, ReactNode } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { usePanelRef } from 'react-resizable-panels'
+import { Button } from '@/components/ui/button'
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from '@/components/ui/resizable'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet'
+import { isBareKeyBlocked } from '@/shell/core/is-typing'
+import type { ShellLabels } from '@/shell/core/labels'
+import { shellLabelsEn } from '@/shell/core/labels'
+import { ShellLabelsContext } from '@/shell/core/labels-context'
+import { ShellPanelContext } from '@/shell/core/panel-state'
+import type { ShellPrefs } from '@/shell/core/prefs'
+import { readShellPrefs, shellPrefsCookie } from '@/shell/core/prefs'
+import type { ShellSpace } from '@/shell/core/spaces'
+import { spaceFor } from '@/shell/core/spaces'
+import { useIsMobile } from '@/shell/core/use-is-mobile'
+import { NavigationProgress } from '@/shell/layout/navigation-progress'
+import {
+  PAGE_GUTTER,
+  PAGE_TOP,
+  ShellPageContext,
+} from '@/shell/layout/page-context'
+import type { ShellNewAction } from '@/shell/layout/rail'
+import { Rail } from '@/shell/layout/rail'
+import { useShellPathname } from '@/shell/router'
 
 // A page holding `<PageBody fill>` becomes a full-height column (as does the page root around
 // it), so the body gets a definite height. Pure CSS: nothing remounts when a page opts in.
 const FILL_PAGE = [
-  "[&:has([data-shell-fill])]:flex",
-  "[&:has([data-shell-fill])]:h-full",
-  "[&:has([data-shell-fill])]:flex-col",
-  "[&:has([data-shell-fill])]:pb-0",
-  "[&>:has([data-shell-fill])]:flex",
-  "[&>:has([data-shell-fill])]:min-h-0",
-  "[&>:has([data-shell-fill])]:flex-1",
-  "[&>:has([data-shell-fill])]:flex-col",
-].join(" ");
+  '[&:has([data-shell-fill])]:flex',
+  '[&:has([data-shell-fill])]:h-full',
+  '[&:has([data-shell-fill])]:flex-col',
+  '[&:has([data-shell-fill])]:pb-0',
+  '[&>:has([data-shell-fill])]:flex',
+  '[&>:has([data-shell-fill])]:min-h-0',
+  '[&>:has([data-shell-fill])]:flex-1',
+  '[&>:has([data-shell-fill])]:flex-col',
+].join(' ')
 
 /** The saved width of the open panel, else its default. */
 function panelWidth(prefs: ShellPrefs): string {
-  return prefs.panelSize ? `${prefs.panelSize}%` : "240px";
+  return prefs.panelSize ? `${prefs.panelSize}%` : '240px'
 }
 
 export interface AppShellProps {
   /** Rail entries, in order; `footer` ones sit above the account control. */
-  spaces: ShellSpace[];
+  spaces: ShellSpace[]
   /** The panel shown beside each space's pages, by space key. A space without one has no panel. */
-  panels?: Partial<Record<string, ComponentType>>;
-  homeHref: string;
-  logo: ReactNode;
+  panels?: Partial<Record<string, ComponentType>>
+  homeHref: string
+  logo: ReactNode
   /** Accessible name of the logo link (the app name). */
-  logoLabel: string;
+  logoLabel: string
   /** The control at the rail's foot, e.g. an account menu. */
-  account?: ReactNode;
+  account?: ReactNode
   /** Rail "new" button; the bare `C` key runs it too. */
-  newAction?: ShellNewAction | undefined;
+  newAction?: ShellNewAction | undefined
   /** Rail search button; Cmd/Ctrl+K runs it too. The host renders the dialog it opens. */
-  onSearch?: (() => void) | undefined;
+  onSearch?: (() => void) | undefined
   /** Above the page inside the content card, e.g. a notice. */
-  banner?: ReactNode;
-  labels?: ShellLabels;
+  banner?: ReactNode
+  labels?: ShellLabels
   /**
    * The prefs cookie as the server read it (`readShellPrefs`), so a server render matches the
    * client. Without it the shell reads `document.cookie`.
    */
-  prefs?: ShellPrefs | undefined;
-  children: ReactNode;
+  prefs?: ShellPrefs | undefined
+  children: ReactNode
 }
 
 /**
@@ -87,82 +100,84 @@ export function AppShell({
   prefs,
   children,
 }: AppShellProps) {
-  const pathname = useShellPathname();
+  const pathname = useShellPathname()
   const [initialPrefs] = useState(
     () =>
       prefs ??
-      (typeof document === "undefined" ? { panelOpen: true } : readShellPrefs(document.cookie)),
-  );
-  const prefsRef = useRef(initialPrefs);
+      (typeof document === 'undefined'
+        ? { panelOpen: true }
+        : readShellPrefs(document.cookie)),
+  )
+  const prefsRef = useRef(initialPrefs)
   const savePrefs = useCallback((next: Partial<ShellPrefs>) => {
-    prefsRef.current = { ...prefsRef.current, ...next };
+    prefsRef.current = { ...prefsRef.current, ...next }
     // biome-ignore lint/suspicious/noDocumentCookie: a synchronous write the server reads back
-    document.cookie = shellPrefsCookie(prefsRef.current);
-  }, []);
-  const [panelOpen, setOpen] = useState(initialPrefs.panelOpen);
+    document.cookie = shellPrefsCookie(prefsRef.current)
+  }, [])
+  const [panelOpen, setOpen] = useState(initialPrefs.panelOpen)
   const panelState = useMemo(
-    () => ({ open: panelOpen, toggle: () => setOpen(o => !o), setOpen }),
+    () => ({ open: panelOpen, toggle: () => setOpen((o) => !o), setOpen }),
     [panelOpen],
-  );
-  const togglePanel = panelState.toggle;
-  const [navOpen, setNavOpen] = useState(false);
-  const isMobile = useIsMobile();
-  const pressAtRef = useRef<number | null>(null);
-  const panelRef = usePanelRef();
-  const [animating, setAnimating] = useState(false);
-  const openRef = useRef(panelOpen);
+  )
+  const togglePanel = panelState.toggle
+  const [navOpen, setNavOpen] = useState(false)
+  const isMobile = useIsMobile()
+  const pressAtRef = useRef<number | null>(null)
+  const panelRef = usePanelRef()
+  const [animating, setAnimating] = useState(false)
+  const openRef = useRef(panelOpen)
 
-  const space = spaceFor(spaces, pathname);
-  const Panel = space ? panels[space.key] : undefined;
+  const space = spaceFor(spaces, pathname)
+  const Panel = space ? panels[space.key] : undefined
   // The panel stays mounted while folded (collapsed to 0) so folding can animate.
-  const showPanel = !!Panel && !isMobile;
+  const showPanel = !!Panel && !isMobile
 
   // Close the mobile sheet once something in it has navigated.
   // biome-ignore lint/correctness/useExhaustiveDependencies: a navigation is the trigger
-  useEffect(() => setNavOpen(false), [pathname]);
+  useEffect(() => setNavOpen(false), [pathname])
 
-  useEffect(() => savePrefs({ panelOpen }), [panelOpen, savePrefs]);
+  useEffect(() => savePrefs({ panelOpen }), [panelOpen, savePrefs])
 
   // Animate a toggle of the stored open state. A panel that mounts later lines itself up
   // in `onResize` instead: its group does not know it before that first call.
   useEffect(() => {
-    if (openRef.current === panelOpen) return;
-    openRef.current = panelOpen;
-    const panel = panelRef.current;
-    if (!panel) return;
-    setAnimating(true);
-    if (panelOpen) panel.resize(panelWidth(prefsRef.current));
-    else panel.collapse();
-  }, [panelOpen, panelRef]);
+    if (openRef.current === panelOpen) return
+    openRef.current = panelOpen
+    const panel = panelRef.current
+    if (!panel) return
+    setAnimating(true)
+    if (panelOpen) panel.resize(panelWidth(prefsRef.current))
+    else panel.collapse()
+  }, [panelOpen, panelRef])
 
   useEffect(() => {
-    if (!animating) return;
-    const timer = setTimeout(setAnimating, 200, false);
-    return () => clearTimeout(timer);
-  }, [animating]);
+    if (!animating) return
+    const timer = setTimeout(setAnimating, 200, false)
+    return () => clearTimeout(timer)
+  }, [animating])
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.shiftKey || e.altKey || e.defaultPrevented) return;
-      const key = e.key.toLowerCase();
+      if (e.shiftKey || e.altKey || e.defaultPrevented) return
+      const key = e.key.toLowerCase()
       if (e.metaKey || e.ctrlKey) {
-        if (key === "b") {
-          e.preventDefault();
-          togglePanel();
-        } else if (key === "k" && onSearch) {
-          e.preventDefault();
-          onSearch();
+        if (key === 'b') {
+          e.preventDefault()
+          togglePanel()
+        } else if (key === 'k' && onSearch) {
+          e.preventDefault()
+          onSearch()
         }
-        return;
+        return
       }
-      if (key === "c" && newAction && !isBareKeyBlocked(e)) {
-        e.preventDefault();
-        newAction.onSelect();
+      if (key === 'c' && newAction && !isBareKeyBlocked(e)) {
+        e.preventDefault()
+        newAction.onSelect()
       }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [togglePanel, onSearch, newAction]);
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [togglePanel, onSearch, newAction])
 
   const railProps = {
     spaces,
@@ -173,7 +188,7 @@ export function AppShell({
     newAction,
     onSearch,
     hasPanel: (key: string) => !!panels[key],
-  };
+  }
 
   return (
     <ShellLabelsContext value={labels}>
@@ -184,7 +199,13 @@ export function AppShell({
             <header className="flex h-12 shrink-0 items-center gap-2 border-b bg-background px-3 md:hidden">
               <Sheet open={navOpen} onOpenChange={setNavOpen}>
                 <SheetTrigger
-                  render={<Button variant="ghost" size="icon-sm" aria-label={labels.openMenu} />}
+                  render={
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      aria-label={labels.openMenu}
+                    />
+                  }
                 >
                   <Menu />
                 </SheetTrigger>
@@ -202,7 +223,11 @@ export function AppShell({
                   )}
                 </SheetContent>
               </Sheet>
-              {space && <span className="truncate text-sm font-medium">{space.label}</span>}
+              {space && (
+                <span className="truncate text-sm font-medium">
+                  {space.label}
+                </span>
+              )}
             </header>
             <div
               data-slot="content-card"
@@ -212,11 +237,12 @@ export function AppShell({
               {/* Hiding the panel below `md` covers a server render on a phone, before `useIsMobile` knows. */}
               <ResizablePanelGroup
                 orientation="horizontal"
-                onLayoutChanged={layout => {
-                  const size = layout.panel;
-                  if (size) savePrefs({ panelSize: Math.round(size * 100) / 100 });
+                onLayoutChanged={(layout) => {
+                  const size = layout.panel
+                  if (size)
+                    savePrefs({ panelSize: Math.round(size * 100) / 100 })
                 }}
-                className={`min-h-0 min-w-0 flex-1 max-md:[&>#panel]:hidden! ${animating ? "[&>[data-panel]]:transition-[flex-grow] [&>[data-panel]]:duration-200 [&>[data-panel]]:ease-out" : ""}`}
+                className={`min-h-0 min-w-0 flex-1 max-md:[&>#panel]:hidden! ${animating ? '[&>[data-panel]]:transition-[flex-grow] [&>[data-panel]]:duration-200 [&>[data-panel]]:ease-out' : ''}`}
               >
                 {/* Panel and handle come and go in front of the page, which keeps its position so folding never remounts it. */}
                 {showPanel && (
@@ -229,16 +255,17 @@ export function AppShell({
                     collapsible
                     collapsedSize={0}
                     onResize={(size, _id, prev) => {
-                      const open = openRef.current;
-                      const folded = size.inPixels === 0;
+                      const open = openRef.current
+                      const folded = size.inPixels === 0
                       if (prev === undefined) {
                         // Just mounted: follow the stored state over the saved layout.
-                        if (open && folded) panelRef.current?.resize(panelWidth(prefsRef.current));
-                        else if (!open && !folded) panelRef.current?.collapse();
+                        if (open && folded)
+                          panelRef.current?.resize(panelWidth(prefsRef.current))
+                        else if (!open && !folded) panelRef.current?.collapse()
                       } else if (open && folded) {
                         // Dragging past the minimum folds the panel too.
-                        openRef.current = false;
-                        setOpen(false);
+                        openRef.current = false
+                        setOpen(false)
                       }
                     }}
                     className="min-w-0 overflow-hidden!"
@@ -253,20 +280,22 @@ export function AppShell({
                   <ResizableHandle
                     withHandle={panelOpen}
                     className={
-                      panelOpen ? "max-md:hidden" : "pointer-events-none opacity-0 max-md:hidden"
+                      panelOpen
+                        ? 'max-md:hidden'
+                        : 'pointer-events-none opacity-0 max-md:hidden'
                     }
                     title={labels.toggleSidebar}
-                    onPointerDown={e => {
-                      pressAtRef.current = e.clientX;
+                    onPointerDown={(e) => {
+                      pressAtRef.current = e.clientX
                     }}
-                    onClick={e => {
+                    onClick={(e) => {
                       // A click folds the panel; a drag only resizes it.
                       if (
                         pressAtRef.current !== null &&
                         Math.abs(e.clientX - pressAtRef.current) < 3
                       )
-                        togglePanel();
-                      pressAtRef.current = null;
+                        togglePanel()
+                      pressAtRef.current = null
                     }}
                   />
                 )}
@@ -274,7 +303,9 @@ export function AppShell({
                   <main className="flex h-full min-h-0 min-w-0 flex-col">
                     {banner}
                     <ScrollArea className="min-h-0 flex-1">
-                      <div className={`${PAGE_GUTTER} ${PAGE_TOP} ${FILL_PAGE} pb-6`}>
+                      <div
+                        className={`${PAGE_GUTTER} ${PAGE_TOP} ${FILL_PAGE} pb-6`}
+                      >
                         <ShellPageContext
                           value={{
                             ...(space?.icon ? { icon: space.icon } : {}),
@@ -293,5 +324,5 @@ export function AppShell({
         </div>
       </ShellPanelContext>
     </ShellLabelsContext>
-  );
+  )
 }

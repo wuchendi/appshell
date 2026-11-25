@@ -1,25 +1,25 @@
-"use client";
+'use client'
 
-import { cn } from "cn";
-import { Search, SquarePen } from "lucide-react";
-import type { ReactNode } from "react";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { MOD_KEY } from "@/shell/core/keys";
-import { useShellLabels } from "@/shell/core/labels-context";
-import { useShellPanel } from "@/shell/core/panel-state";
-import type { ShellSpace } from "@/shell/core/spaces";
-import { isActivePath, railEntryFolds } from "@/shell/core/spaces";
-import { IconButton } from "@/shell/layout/icon-button";
-import { ShellLink, useShellPathname } from "@/shell/router";
+import { cn } from 'cn'
+import { Search, SquarePen } from 'lucide-react'
+import type { ReactNode } from 'react'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { MOD_KEY } from '@/shell/core/keys'
+import { useShellLabels } from '@/shell/core/labels-context'
+import { useShellPanel } from '@/shell/core/panel-state'
+import type { ShellSpace } from '@/shell/core/spaces'
+import { isActivePath, railEntryFolds } from '@/shell/core/spaces'
+import { IconButton } from '@/shell/layout/icon-button'
+import { ShellLink, useShellPathname } from '@/shell/router'
 
 const ENTRY_BASE =
-  "shrink-0 rounded-[6px] text-muted-foreground transition-colors outline-none hover:bg-foreground/5 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring aria-[current=page]:bg-foreground/[0.07] aria-[current=page]:text-foreground";
-const ENTRY_CLASS = `${ENTRY_BASE} flex w-[50px] flex-col items-center gap-0.5 pt-1.5 pb-1 text-[10px] leading-[13px] [&_svg]:size-[18px]`;
-const FOOTER_ENTRY_CLASS = `${ENTRY_BASE} grid size-9 place-items-center [&_svg]:size-[18px]`;
+  'shrink-0 rounded-[6px] text-muted-foreground transition-colors outline-none hover:bg-foreground/5 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring aria-[current=page]:bg-foreground/[0.07] aria-[current=page]:text-foreground'
+const ENTRY_CLASS = `${ENTRY_BASE} flex w-[50px] flex-col items-center gap-0.5 pt-1.5 pb-1 text-[10px] leading-[13px] [&_svg]:size-[18px]`
+const FOOTER_ENTRY_CLASS = `${ENTRY_BASE} grid size-9 place-items-center [&_svg]:size-[18px]`
 
 export interface ShellNewAction {
-  label: string;
-  onSelect: () => void;
+  label: string
+  onSelect: () => void
 }
 
 /**
@@ -38,52 +38,60 @@ export function Rail({
   onNavigate,
   className,
 }: {
-  spaces: ShellSpace[];
-  homeHref: string;
-  logo: ReactNode;
-  logoLabel: string;
-  account?: ReactNode;
-  newAction?: ShellNewAction | undefined;
-  onSearch?: (() => void) | undefined;
+  spaces: ShellSpace[]
+  homeHref: string
+  logo: ReactNode
+  logoLabel: string
+  account?: ReactNode
+  newAction?: ShellNewAction | undefined
+  onSearch?: (() => void) | undefined
   /** Whether a space has a panel; only those fold from the rail. */
-  hasPanel: (key: string) => boolean;
+  hasPanel: (key: string) => boolean
   /** Set in the mobile sheet: entries close it, and the current entry no longer folds the panel. */
-  onNavigate?: () => void;
-  className?: string;
+  onNavigate?: () => void
+  className?: string
 }) {
-  const labels = useShellLabels();
-  const pathname = useShellPathname();
-  const togglePanel = useShellPanel().toggle;
+  const labels = useShellLabels()
+  const pathname = useShellPathname()
+  const togglePanel = useShellPanel().toggle
   const entry = (space: ShellSpace) => {
-    const iconOnly = !!space.footer;
-    const Icon = space.icon;
-    const active = isActivePath(pathname, space);
+    const iconOnly = !!space.footer
+    const Icon = space.icon
+    const active = isActivePath(pathname, space)
     return (
       <ShellLink
         key={space.key}
         href={space.href}
-        aria-current={active ? "page" : undefined}
+        aria-current={active ? 'page' : undefined}
         aria-label={iconOnly ? space.label : undefined}
         title={iconOnly ? space.label : undefined}
-        onClick={e => {
+        onClick={(e) => {
           // On the desktop rail, the entry of the space being shown folds its panel.
-          if (!onNavigate && railEntryFolds(pathname, space, hasPanel(space.key))) {
-            e.preventDefault();
-            togglePanel();
+          if (
+            !onNavigate &&
+            railEntryFolds(pathname, space, hasPanel(space.key))
+          ) {
+            e.preventDefault()
+            togglePanel()
           }
-          onNavigate?.();
+          onNavigate?.()
         }}
         className={iconOnly ? FOOTER_ENTRY_CLASS : ENTRY_CLASS}
       >
         <Icon aria-hidden="true" />
-        {!iconOnly && <span className="max-w-full truncate px-0.5">{space.label}</span>}
+        {!iconOnly && (
+          <span className="max-w-full truncate px-0.5">{space.label}</span>
+        )}
       </ShellLink>
-    );
-  };
+    )
+  }
   return (
     <nav
       data-slot="app-rail"
-      className={cn("flex w-[60px] shrink-0 flex-col items-center gap-0.5 py-2.5", className)}
+      className={cn(
+        'flex w-[60px] shrink-0 flex-col items-center gap-0.5 py-2.5',
+        className,
+      )}
     >
       <ShellLink
         href={homeHref}
@@ -97,7 +105,7 @@ export function Rail({
         <IconButton
           label={newAction.label}
           icon={SquarePen}
-          keys={["C"]}
+          keys={['C']}
           side="right"
           onClick={newAction.onSelect}
           className="size-9 [&_svg]:size-[18px]"
@@ -107,7 +115,7 @@ export function Rail({
         <IconButton
           label={labels.search}
           icon={Search}
-          keys={[MOD_KEY, "K"]}
+          keys={[MOD_KEY, 'K']}
           side="right"
           onClick={onSearch}
           className="size-9 [&_svg]:size-[18px]"
@@ -115,13 +123,13 @@ export function Rail({
       )}
       <ScrollArea className="mt-1.5 min-h-0 w-full flex-1">
         <div className="flex flex-col items-center gap-0.5">
-          {spaces.filter(s => !s.footer).map(entry)}
+          {spaces.filter((s) => !s.footer).map(entry)}
         </div>
       </ScrollArea>
       <div className="flex flex-col items-center gap-1 pt-2">
-        {spaces.filter(s => s.footer).map(entry)}
+        {spaces.filter((s) => s.footer).map(entry)}
         {account && <div className="mt-1">{account}</div>}
       </div>
     </nav>
-  );
+  )
 }
