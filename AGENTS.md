@@ -66,4 +66,6 @@ Code, comments, docs and commit messages in English.
 
 Releases: tag a commit that is not yet on `main` and push both at once
 (`git push origin main vX.Y.Z`). GitHub Pages keeps the first deployment of a commit, so a tag
-added to a commit `main` already deployed never reaches `/r/`.
+added to a commit `main` already deployed never reaches `/r/`. Then create the GitHub release by
+hand — no workflow does it: `gh release create vX.Y.Z --latest --notes-file …`, notes in the
+previous release's shape (Fixes / Features / Polish / Breaking / pinned install / full changelog).
