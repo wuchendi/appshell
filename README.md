@@ -172,9 +172,15 @@ Server Component can import.
 
   Active states, `navigate()`, rail and panel links then work on `/studio` while the browser is on
   `/zh/studio`. Re-apply the import after each `shadcn add`.
-- **Shortcuts**: Cmd/Ctrl+B folds the panel, Cmd/Ctrl+K calls `onSearch`, a bare `C` runs
-  `newAction`. The panel edge folds the panel too. Bare keys (`C`, `/` in `HeaderSearch`, J/K)
-  do nothing while typing, during IME composition or with focus in a modal dialog.
+- **Shortcuts**: Cmd/Ctrl+B folds the panel, Cmd/Ctrl+K calls `onSearch`, a bare `C` (or
+  `newAction.key`) runs `newAction`. The panel edge folds the panel too. Bare keys (`C`, `/` in
+  `HeaderSearch`, J/K) do nothing while typing, during IME composition or with focus in a modal
+  dialog.
+- **Rail badges**: `ShellSpace.badge` sits at the entry icon's top right, e.g. an unread count;
+  a number hides at 0.
+- **Current links**: `ShellLink` is marked current only by the `aria-current` it is given. The
+  TanStack adapter drops the router's own active marking (`aria-current`, `data-status`, the
+  `active` class), which names a pending navigation's target before its page shows.
 - **Labels**: every visible string comes from `labels` (`ShellLabels`). `shellLabelsEn` and
   `shellLabelsZh` ship with the shell; hosts on i18n build the object from their translations.
 - **Rows**: give list rows `data-shell-row` and `tabIndex={0}`, then `useRowNavigation(listRef)`

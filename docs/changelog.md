@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-11-25 — v0.4.3
+
+Requested by bks (bks `docs/appshell-requirements.md`, R1–R8). Taken: R1, R4 and the key half of
+R6. Left to bks: R2 (use `useShellPanel()` instead of its own store), R5 (make the inbox list the
+inbox space's panel), R6's footer (the `account` slot takes any node). R3 (a width per space) is
+deferred; R7/R8 need no change.
+
+- **TanStack `ShellLink`** (R1): built with `createLink` around an anchor that drops the router's
+  `aria-current` / `data-status` (and `activeProps={{}}` drops the `active` class). TanStack marks
+  a link active against `location`, which names a pending navigation's target, and writes
+  `aria-current` after the caller's props, so during a slow navigation both the old and the target
+  rail entries were current. Only the caller's `aria-current` counts now, as in the Next adapter.
+  The v0.4.2 check looked at the first current entry only and missed it.
+- **Rail badge** (R4): `ShellSpace.badge?: ReactNode` at the icon's top right; a number hides at
+  0. The entry's name reads "Items (3)": the drawn badge is `aria-hidden`, an `sr-only` copy
+  follows the label when the badge is a number or string (a dot or icon adds nothing). Footer entries carry their label as `sr-only` text instead of `aria-label`,
+  so their badge is named too.
+- **New key** (R6): `ShellNewAction.key` (either case, default `c`) drives the bare-key shortcut
+  and the button's key cap.
+- Not breaking: all additions are optional.
+
 ## 2026-11-25 — v0.4.2
 
 Requested by Posera (posewear-next `docs/appshell-feedback.md`, items 1–6): Next.js 16 with

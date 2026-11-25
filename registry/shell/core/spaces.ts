@@ -1,4 +1,5 @@
 import type { LucideIcon } from 'lucide-react'
+import type { ReactNode } from 'react'
 
 /** One rail entry: a top-level area of the app. */
 export interface ShellSpace {
@@ -13,6 +14,8 @@ export interface ShellSpace {
   match?: string[]
   /** Shown at the rail foot as an icon only, above the account control. */
   footer?: boolean
+  /** At the icon's top right, e.g. an unread count; a number hides at 0. A number or string is also read after the label. */
+  badge?: ReactNode
 }
 
 function under(pathname: string, prefix: string): boolean {

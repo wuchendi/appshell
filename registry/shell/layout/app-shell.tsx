@@ -73,7 +73,7 @@ export interface AppShellProps {
   logoLabel: string
   /** The control at the rail's foot, e.g. an account menu. */
   account?: ReactNode
-  /** Rail "new" button; the bare `C` key runs it too. */
+  /** Rail "new" button; its bare key (default `C`) runs it too. */
   newAction?: ShellNewAction | undefined
   /** Rail search button; Cmd/Ctrl+K runs it too. The host renders the dialog it opens. */
   onSearch?: (() => void) | undefined
@@ -206,7 +206,11 @@ export function AppShell({
         }
         return
       }
-      if (key === 'c' && newAction && !isBareKeyBlocked(e)) {
+      if (
+        newAction &&
+        key === (newAction.key ?? 'c').toLowerCase() &&
+        !isBareKeyBlocked(e)
+      ) {
         e.preventDefault()
         newAction.onSelect()
       }

@@ -23,6 +23,7 @@ const SPACES = [
     href: '/items',
     label: 'Items',
     icon: Boxes,
+    badge: 3,
   },
   {
     key: 'settings',

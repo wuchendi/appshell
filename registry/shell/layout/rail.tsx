@@ -20,6 +20,8 @@ const FOOTER_ENTRY_CLASS = `${ENTRY_BASE} grid size-9 place-items-center [&_svg]
 export interface ShellNewAction {
   label: string
   onSelect: () => void
+  /** The bare key that runs it, either case; default `c`. */
+  key?: string | undefined
 }
 
 /**
@@ -58,12 +60,13 @@ export function Rail({
     const iconOnly = !!space.footer
     const Icon = space.icon
     const active = isActivePath(pathname, space)
+    const badge =
+      typeof space.badge === 'number' ? space.badge > 0 : space.badge != null
     return (
       <ShellLink
         key={space.key}
         href={space.href}
         aria-current={active ? 'page' : undefined}
-        aria-label={iconOnly ? space.label : undefined}
         title={iconOnly ? space.label : undefined}
         onClick={(e) => {
           // On the desktop rail, the entry of the space being shown folds its panel.
@@ -78,10 +81,26 @@ export function Rail({
         }}
         className={iconOnly ? FOOTER_ENTRY_CLASS : ENTRY_CLASS}
       >
-        <Icon aria-hidden="true" />
-        {!iconOnly && (
-          <span className="max-w-full truncate px-0.5">{space.label}</span>
-        )}
+        <span className="relative">
+          <Icon aria-hidden="true" />
+          {badge && (
+            <span
+              aria-hidden="true"
+              className="absolute -top-1.5 left-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] leading-none font-medium text-primary-foreground tabular-nums"
+            >
+              {space.badge}
+            </span>
+          )}
+        </span>
+        <span className={iconOnly ? 'sr-only' : 'max-w-full truncate px-0.5'}>
+          {space.label}
+        </span>
+        {/* The name reads "Inbox (3)"; the drawn badge is hidden from it. A node badge (a dot, an icon) has no text to add. */}
+        {badge &&
+          (typeof space.badge === 'number' ||
+            typeof space.badge === 'string') && (
+            <span className="sr-only"> ({space.badge})</span>
+          )}
       </ShellLink>
     )
   }
@@ -105,7 +124,7 @@ export function Rail({
         <IconButton
           label={newAction.label}
           icon={SquarePen}
-          keys={['C']}
+          keys={[(newAction.key ?? 'c').toUpperCase()]}
           side="right"
           onClick={newAction.onSelect}
           className="size-9 [&_svg]:size-[18px]"
