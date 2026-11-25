@@ -1,3 +1,5 @@
+// biome-ignore-all lint/a11y/useSemanticElements: CSS grid rows (one column template, a sticky header outside the scroll area, sub-rows spanning every column) that table elements cannot lay out; ARIA table roles keep the semantics
+// biome-ignore-all lint/a11y/useFocusableInteractive: only rows that open take focus; the header and sub-rows are not interactive
 'use client'
 
 import { ScrollArea as ScrollAreaPrimitive } from '@base-ui/react/scroll-area'
@@ -183,7 +185,8 @@ export function CollectionTable<T>({
             </span>
           )}
           {shown.map((c) => {
-            const active = !!sort && !!c.sortKey && sort.key === c.sortKey
+            const sortKey = c.sortKey
+            const active = !!sort && !!sortKey && sort.key === sortKey
             const Arrow = sort?.direction === 'asc' ? ArrowUp : ArrowDown
             return (
               <span
@@ -201,10 +204,10 @@ export function CollectionTable<T>({
                   c.align === 'end' && ALIGN_END,
                 )}
               >
-                {c.sortKey && sort ? (
+                {sortKey && sort ? (
                   <button
                     type="button"
-                    onClick={() => sort.onSort(c.sortKey!)}
+                    onClick={() => sort.onSort(sortKey)}
                     className={cn(
                       'inline-flex items-center gap-0.5 hover:text-foreground',
                       active && 'text-foreground',

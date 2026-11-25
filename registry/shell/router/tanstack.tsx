@@ -26,9 +26,15 @@ export function ShellLink({ href, ...props }: ShellLinkProps) {
   return <Link {...target(href)} activeOptions={EXACT} {...(props as object)} />
 }
 
-/** The current path, without the router's base path. */
+/**
+ * The current path, without the router's base path. It is the path of the page on screen:
+ * `location` already names a pending navigation's target while the old page still renders,
+ * so the rail and panel would switch before the page does; `resolvedLocation` moves with it.
+ */
 export function useShellPathname(): string {
-  return useRouterState({ select: (s) => s.location.pathname })
+  return useRouterState({
+    select: (s) => (s.resolvedLocation ?? s.location).pathname,
+  })
 }
 
 /** Navigates to an app path. */

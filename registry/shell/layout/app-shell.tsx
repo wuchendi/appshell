@@ -2,7 +2,14 @@
 
 import { Menu } from 'lucide-react'
 import type { ComponentType, ReactNode } from 'react'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { usePanelRef } from 'react-resizable-panels'
 import { Button } from '@/components/ui/button'
 import {
@@ -74,10 +81,13 @@ export interface AppShellProps {
   banner?: ReactNode
   labels?: ShellLabels
   /**
-   * The prefs cookie as the server read it (`readShellPrefs`), so a server render matches the
-   * client. Without it the shell reads `document.cookie`.
+   * Where the panel's stored state comes from:
+   * - the prefs cookie as the server read it (`readShellPrefs`), so a server render matches;
+   * - `"client"` on a statically prerendered host: render the defaults, then apply the cookie
+   *   right after hydration, without the fold animation;
+   * - omitted on a client-only host: read `document.cookie` while rendering.
    */
-  prefs?: ShellPrefs | undefined
+  prefs?: ShellPrefs | 'client' | undefined
   children: ReactNode
 }
 
@@ -101,12 +111,18 @@ export function AppShell({
   children,
 }: AppShellProps) {
   const pathname = useShellPathname()
-  const [initialPrefs] = useState(
-    () =>
-      prefs ??
-      (typeof document === 'undefined'
+  const [initialPrefs] = useState<ShellPrefs>(() =>
+    typeof prefs === 'object'
+      ? prefs
+      : prefs === 'client' || typeof document === 'undefined'
         ? { panelOpen: true }
-        : readShellPrefs(document.cookie)),
+        : readShellPrefs(document.cookie),
+  )
+  // Read before anything below can write the cookie; applied only after hydration.
+  const [storedPrefs] = useState(() =>
+    prefs === 'client' && typeof document !== 'undefined'
+      ? readShellPrefs(document.cookie)
+      : null,
   )
   const prefsRef = useRef(initialPrefs)
   const savePrefs = useCallback((next: Partial<ShellPrefs>) => {
@@ -126,6 +142,7 @@ export function AppShell({
   const panelRef = usePanelRef()
   const [animating, setAnimating] = useState(false)
   const openRef = useRef(panelOpen)
+  const restoringRef = useRef<boolean | null>(null)
 
   const space = spaceFor(spaces, pathname)
   const Panel = space ? panels[space.key] : undefined
@@ -140,7 +157,12 @@ export function AppShell({
 
   // Animate a toggle of the stored open state. A panel that mounts later lines itself up
   // in `onResize` instead: its group does not know it before that first call.
-  useEffect(() => {
+  useLayoutEffect(() => {
+    // A restore below is on its way: this render's state is the default it replaces.
+    if (restoringRef.current !== null) {
+      if (restoringRef.current === panelOpen) restoringRef.current = null
+      return
+    }
     if (openRef.current === panelOpen) return
     openRef.current = panelOpen
     const panel = panelRef.current
@@ -149,6 +171,20 @@ export function AppShell({
     if (panelOpen) panel.resize(panelWidth(prefsRef.current))
     else panel.collapse()
   }, [panelOpen, panelRef])
+
+  // Static hosts: the stored state replaces the defaults before the first paint, unanimated.
+  useLayoutEffect(() => {
+    if (!storedPrefs) return
+    prefsRef.current = storedPrefs
+    openRef.current = storedPrefs.panelOpen
+    if (storedPrefs.panelOpen !== initialPrefs.panelOpen) {
+      restoringRef.current = storedPrefs.panelOpen
+      setOpen(storedPrefs.panelOpen)
+    }
+    const panel = panelRef.current
+    if (storedPrefs.panelOpen) panel?.resize(panelWidth(storedPrefs))
+    else panel?.collapse()
+  }, [storedPrefs, initialPrefs, panelRef])
 
   useEffect(() => {
     if (!animating) return

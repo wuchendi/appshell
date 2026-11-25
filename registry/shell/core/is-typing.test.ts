@@ -21,7 +21,9 @@ describe('isBareKeyBlocked', () => {
     const host = document.createElement('div')
     host.innerHTML = html
     document.body.append(host)
-    return host.querySelector('button')!
+    const button = host.querySelector('button')
+    if (!button) throw new Error('the fixture has no button')
+    return button
   }
 
   it('lets a bare key through on the page', () => {

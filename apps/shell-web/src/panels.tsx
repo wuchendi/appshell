@@ -50,7 +50,7 @@ export function ItemsPanel() {
             active={pathname === '/items' && status === s}
             onClick={() => setStatus(s)}
           >
-            {s[0]!.toUpperCase() + s.slice(1)}
+            {s.charAt(0).toUpperCase() + s.slice(1)}
           </PanelRow>
         ))}
       </PanelSection>
