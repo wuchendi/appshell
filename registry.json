@@ -168,7 +168,13 @@
       "title": "App shell: list header menus",
       "description": "Header controls for list pages: Filter (an icon carrying the active count, with reset) and Display popovers, chips, label/switch rows, a reset button and a search icon that expands into a field (/ to open, Esc to clear).",
       "dependencies": ["cn", "lucide-react"],
-      "registryDependencies": ["button", "popover", "switch", "toggle-group", "@cdlab/shell-core"],
+      "registryDependencies": [
+        "button",
+        "popover",
+        "switch",
+        "toggle-group",
+        "@cdlab/shell-core"
+      ],
       "files": [
         {
           "path": "registry/shell/menus/menus.tsx",

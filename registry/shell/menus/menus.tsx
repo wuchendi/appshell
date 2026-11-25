@@ -1,19 +1,23 @@
-"use client";
+'use client'
 
-import { cn } from "cn";
-import { Filter, Search, SlidersHorizontal, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Switch } from "@/components/ui/switch";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { isBareKeyBlocked } from "@/shell/core/is-typing";
-import { formatLabel } from "@/shell/core/labels";
-import { useShellLabels } from "@/shell/core/labels-context";
+import { cn } from 'cn'
+import { Filter, Search, SlidersHorizontal, X } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { Button } from '@/components/ui/button'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
+import { Switch } from '@/components/ui/switch'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
+import { isBareKeyBlocked } from '@/shell/core/is-typing'
+import { formatLabel } from '@/shell/core/labels'
+import { useShellLabels } from '@/shell/core/labels-context'
 
 // A chip in a menu's toggle group: pressed reads as the primary tint.
 const CHIP =
-  "h-7 gap-1.5 px-2 text-[12px] aria-pressed:border-primary/40 aria-pressed:bg-primary/10 aria-pressed:text-primary dark:aria-pressed:border-primary/70 dark:aria-pressed:bg-primary/30 dark:aria-pressed:text-foreground";
+  'h-7 gap-1.5 px-2 text-[12px] aria-pressed:border-primary/40 aria-pressed:bg-primary/10 aria-pressed:text-primary dark:aria-pressed:border-primary/70 dark:aria-pressed:bg-primary/30 dark:aria-pressed:text-foreground'
 
 // List header controls: "Filter" (what is shown; an icon that carries the
 // active count) and "Display" (layout, sort, columns), each a titled popover,
@@ -25,13 +29,13 @@ export function FilterMenu({
   className,
   children,
 }: {
-  count: number;
-  onReset: () => void;
-  className?: string;
-  children: React.ReactNode;
+  count: number
+  onReset: () => void
+  className?: string
+  children: React.ReactNode
 }) {
-  const labels = useShellLabels();
-  const active = count > 0;
+  const labels = useShellLabels()
+  const active = count > 0
   return (
     <Popover>
       <PopoverTrigger
@@ -39,11 +43,15 @@ export function FilterMenu({
           <Button
             variant="ghost"
             size="sm"
-            aria-label={active ? formatLabel(labels.filterActive, { count }) : labels.filter}
+            aria-label={
+              active
+                ? formatLabel(labels.filterActive, { count })
+                : labels.filter
+            }
             title={labels.filter}
             className={cn(
-              "h-7 min-w-7 shrink-0 gap-1.5 px-1.5 text-muted-foreground",
-              active && "text-foreground",
+              'h-7 min-w-7 shrink-0 gap-1.5 px-1.5 text-muted-foreground',
+              active && 'text-foreground',
             )}
           />
         }
@@ -55,7 +63,7 @@ export function FilterMenu({
           </span>
         )}
       </PopoverTrigger>
-      <PopoverContent align="start" className={cn("w-80 gap-1 p-3", className)}>
+      <PopoverContent align="start" className={cn('w-80 gap-1 p-3', className)}>
         <h4 className="text-[13px] font-semibold">{labels.filter}</h4>
         {children}
         <div className="mt-2 flex justify-end">
@@ -65,11 +73,11 @@ export function FilterMenu({
         </div>
       </PopoverContent>
     </Popover>
-  );
+  )
 }
 
 export function DisplayMenu({ children }: { children: React.ReactNode }) {
-  const labels = useShellLabels();
+  const labels = useShellLabels()
   return (
     <Popover>
       <PopoverTrigger
@@ -90,7 +98,7 @@ export function DisplayMenu({ children }: { children: React.ReactNode }) {
         {children}
       </PopoverContent>
     </Popover>
-  );
+  )
 }
 
 // A labelled block: the label (and an optional control) over its content.
@@ -99,9 +107,9 @@ export function MenuSection({
   action,
   children,
 }: {
-  label: string;
-  action?: React.ReactNode;
-  children: React.ReactNode;
+  label: string
+  action?: React.ReactNode
+  children: React.ReactNode
 }) {
   return (
     <div className="flex flex-col gap-1.5 py-1">
@@ -111,17 +119,23 @@ export function MenuSection({
       </div>
       {children}
     </div>
-  );
+  )
 }
 
 // Label left, control right.
-export function MenuRow({ label, children }: { label: string; children: React.ReactNode }) {
+export function MenuRow({
+  label,
+  children,
+}: {
+  label: string
+  children: React.ReactNode
+}) {
   return (
     <div className="flex min-h-8 items-center justify-between gap-3 text-[13px]">
       <span className="text-muted-foreground">{label}</span>
       {children}
     </div>
-  );
+  )
 }
 
 // Chips picking one value, or several when `multiple`.
@@ -131,10 +145,10 @@ export function Chips<T extends string>({
   onChange,
   multiple = false,
 }: {
-  value: T[];
-  options: { value: T; label: React.ReactNode }[];
-  onChange: (next: T[]) => void;
-  multiple?: boolean;
+  value: T[]
+  options: { value: T; label: React.ReactNode }[]
+  onChange: (next: T[]) => void
+  multiple?: boolean
 }) {
   return (
     <ToggleGroup
@@ -144,24 +158,28 @@ export function Chips<T extends string>({
       multiple={multiple}
       className="flex-wrap"
       value={value}
-      onValueChange={next => onChange(next as T[])}
+      onValueChange={(next) => onChange(next as T[])}
     >
-      {options.map(o => (
+      {options.map((o) => (
         <ToggleGroupItem key={o.value} value={o.value} className={CHIP}>
           {o.label}
         </ToggleGroupItem>
       ))}
     </ToggleGroup>
-  );
+  )
 }
 
 export function ChipCount({ count }: { count: number }) {
-  return <span className="text-[11px] text-muted-foreground tabular-nums">{count}</span>;
+  return (
+    <span className="text-[11px] text-muted-foreground tabular-nums">
+      {count}
+    </span>
+  )
 }
 
 // Clears the filters and search; render it only while one is on.
 export function ResetButton({ onClick }: { onClick: () => void }) {
-  const labels = useShellLabels();
+  const labels = useShellLabels()
   return (
     <Button
       variant="ghost"
@@ -171,7 +189,7 @@ export function ResetButton({ onClick }: { onClick: () => void }) {
     >
       {labels.reset}
     </Button>
-  );
+  )
 }
 
 // A label-left switch row, e.g. a column toggle.
@@ -180,15 +198,15 @@ export function MenuSwitch({
   checked,
   onChange,
 }: {
-  label: string;
-  checked: boolean;
-  onChange: (next: boolean) => void;
+  label: string
+  checked: boolean
+  onChange: (next: boolean) => void
 }) {
   return (
     <MenuRow label={label}>
       <Switch checked={checked} onCheckedChange={onChange} aria-label={label} />
     </MenuRow>
-  );
+  )
 }
 
 // Header search: an icon until used, then a field. "/" opens it; Esc or the
@@ -198,36 +216,36 @@ export function HeaderSearch({
   onChange,
   placeholder,
 }: {
-  value: string;
-  onChange: (value: string) => void;
+  value: string
+  onChange: (value: string) => void
   // Hint shown in the open field; the control itself is named "Search".
-  placeholder: string;
+  placeholder: string
 }) {
-  const labels = useShellLabels();
-  const label = labels.search;
-  const [open, setOpen] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const expanded = open || value !== "";
+  const labels = useShellLabels()
+  const label = labels.search
+  const [open, setOpen] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const expanded = open || value !== ''
 
   useEffect(() => {
-    if (open) inputRef.current?.focus();
-  }, [open]);
+    if (open) inputRef.current?.focus()
+  }, [open])
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key !== "/" || e.metaKey || e.ctrlKey || e.altKey) return;
-      if (e.defaultPrevented || isBareKeyBlocked(e)) return;
-      e.preventDefault();
-      setOpen(true);
-      inputRef.current?.focus();
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, []);
+      if (e.key !== '/' || e.metaKey || e.ctrlKey || e.altKey) return
+      if (e.defaultPrevented || isBareKeyBlocked(e)) return
+      e.preventDefault()
+      setOpen(true)
+      inputRef.current?.focus()
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [])
 
   function close() {
-    onChange("");
-    setOpen(false);
+    onChange('')
+    setOpen(false)
   }
 
   if (!expanded) {
@@ -242,7 +260,7 @@ export function HeaderSearch({
       >
         <Search />
       </Button>
-    );
+    )
   }
   return (
     <div className="relative flex h-7 min-w-32 max-w-60 flex-1 items-center">
@@ -254,13 +272,13 @@ export function HeaderSearch({
         placeholder={placeholder}
         autoComplete="off"
         spellCheck={false}
-        onChange={e => onChange(e.target.value)}
+        onChange={(e) => onChange(e.target.value)}
         onBlur={() => setOpen(false)}
-        onKeyDown={e => {
-          if (e.key !== "Escape") return;
-          e.preventDefault();
-          close();
-          e.currentTarget.blur();
+        onKeyDown={(e) => {
+          if (e.key !== 'Escape') return
+          e.preventDefault()
+          close()
+          e.currentTarget.blur()
         }}
         className="h-7 w-full rounded-md border border-input bg-transparent pr-7 pl-7 text-[13px] outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40 dark:bg-input/30"
       />
@@ -268,7 +286,7 @@ export function HeaderSearch({
         <button
           type="button"
           aria-label={labels.clearSearch}
-          onMouseDown={e => e.preventDefault()}
+          onMouseDown={(e) => e.preventDefault()}
           onClick={close}
           className="absolute right-1.5 rounded text-muted-foreground hover:text-foreground"
         >
@@ -276,5 +294,5 @@ export function HeaderSearch({
         </button>
       )}
     </div>
-  );
+  )
 }

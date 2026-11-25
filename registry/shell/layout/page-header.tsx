@@ -1,46 +1,51 @@
-"use client";
+'use client'
 
-import { cn } from "cn";
-import type { LucideIcon } from "lucide-react";
-import { ChevronDown, PanelLeft } from "lucide-react";
-import type { ReactNode } from "react";
-import { use } from "react";
-import { Button } from "@/components/ui/button";
+import { cn } from 'cn'
+import type { LucideIcon } from 'lucide-react'
+import { ChevronDown, PanelLeft } from 'lucide-react'
+import type { ReactNode } from 'react'
+import { use } from 'react'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { MOD_KEY } from "@/shell/core/keys";
-import { useShellLabels } from "@/shell/core/labels-context";
-import { useShellPanel } from "@/shell/core/panel-state";
-import { IconButton } from "@/shell/layout/icon-button";
+} from '@/components/ui/dropdown-menu'
+import { MOD_KEY } from '@/shell/core/keys'
+import { useShellLabels } from '@/shell/core/labels-context'
+import { useShellPanel } from '@/shell/core/panel-state'
+import { IconButton } from '@/shell/layout/icon-button'
 import {
   PAGE_GUTTER,
   PAGE_GUTTER_BLEED,
   PAGE_TOP_BLEED,
   ShellPageContext,
-} from "@/shell/layout/page-context";
+} from '@/shell/layout/page-context'
 
 function SpaceIcon({ icon: Icon }: { icon: LucideIcon }) {
-  return <Icon aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />;
+  return (
+    <Icon
+      aria-hidden="true"
+      className="size-4 shrink-0 text-muted-foreground"
+    />
+  )
 }
 
 /** Brings a folded space panel back; shown only while it is folded. */
 function PanelToggle() {
-  const labels = useShellLabels();
-  const { hasPanel } = use(ShellPageContext);
-  const { open, toggle } = useShellPanel();
-  if (!hasPanel || open) return null;
+  const labels = useShellLabels()
+  const { hasPanel } = use(ShellPageContext)
+  const { open, toggle } = useShellPanel()
+  if (!hasPanel || open) return null
   return (
     <IconButton
       label={labels.toggleSidebar}
       icon={PanelLeft}
-      keys={[MOD_KEY, "B"]}
+      keys={[MOD_KEY, 'B']}
       onClick={toggle}
       className="-ml-1.5 hidden md:inline-flex"
     />
-  );
+  )
 }
 
 /**
@@ -55,24 +60,24 @@ export function PageHeader({
   actions,
   className,
 }: {
-  title: ReactNode;
-  menu?: ReactNode;
-  tools?: ReactNode;
-  actions?: ReactNode;
-  className?: string;
+  title: ReactNode
+  menu?: ReactNode
+  tools?: ReactNode
+  actions?: ReactNode
+  className?: string
 }) {
-  const { icon } = use(ShellPageContext);
+  const { icon } = use(ShellPageContext)
   const label = (
     <>
       {icon && <SpaceIcon icon={icon} />}
       <span className="min-w-0 truncate">{title}</span>
     </>
-  );
+  )
   return (
     <header
       data-slot="page-header"
       className={cn(
-        "sticky top-0 z-20 flex h-12 shrink-0 items-center gap-2 border-b bg-background",
+        'sticky top-0 z-20 flex h-12 shrink-0 items-center gap-2 border-b bg-background',
         PAGE_GUTTER,
         PAGE_GUTTER_BLEED,
         PAGE_TOP_BLEED,
@@ -108,7 +113,9 @@ export function PageHeader({
         )}
         {tools}
       </div>
-      {actions && <div className="flex shrink-0 items-center gap-1">{actions}</div>}
+      {actions && (
+        <div className="flex shrink-0 items-center gap-1">{actions}</div>
+      )}
     </header>
-  );
+  )
 }

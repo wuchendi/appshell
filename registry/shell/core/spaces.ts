@@ -1,22 +1,22 @@
-import type { LucideIcon } from "lucide-react";
+import type { LucideIcon } from 'lucide-react'
 
 /** One rail entry: a top-level area of the app. */
 export interface ShellSpace {
-  key: string;
-  href: string;
+  key: string
+  href: string
   /** Already translated. */
-  label: string;
-  icon: LucideIcon;
+  label: string
+  icon: LucideIcon
   /** Active only on `href` itself, not below it. */
-  exact?: boolean;
+  exact?: boolean
   /** Extra path prefixes that belong to this space. */
-  match?: string[];
+  match?: string[]
   /** Shown at the rail foot as an icon only, above the account control. */
-  footer?: boolean;
+  footer?: boolean
 }
 
 function under(pathname: string, prefix: string): boolean {
-  return pathname === prefix || pathname.startsWith(`${prefix}/`);
+  return pathname === prefix || pathname.startsWith(`${prefix}/`)
 }
 
 /** Whether `pathname` belongs to an entry with an `href` (and optional `exact` / `match`). */
@@ -24,13 +24,16 @@ export function isActivePath(
   pathname: string,
   entry: { href: string; exact?: boolean; match?: string[] },
 ): boolean {
-  if (entry.exact) return pathname === entry.href;
-  return [entry.href, ...(entry.match ?? [])].some(p => under(pathname, p));
+  if (entry.exact) return pathname === entry.href
+  return [entry.href, ...(entry.match ?? [])].some((p) => under(pathname, p))
 }
 
 /** The first space `pathname` belongs to. */
-export function spaceFor(spaces: readonly ShellSpace[], pathname: string): ShellSpace | undefined {
-  return spaces.find(s => isActivePath(pathname, s));
+export function spaceFor(
+  spaces: readonly ShellSpace[],
+  pathname: string,
+): ShellSpace | undefined {
+  return spaces.find((s) => isActivePath(pathname, s))
 }
 
 /**
@@ -42,5 +45,5 @@ export function railEntryFolds(
   space: { href: string },
   hasPanel: boolean,
 ): boolean {
-  return hasPanel && pathname === space.href;
+  return hasPanel && pathname === space.href
 }

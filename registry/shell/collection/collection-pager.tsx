@@ -1,26 +1,32 @@
-"use client";
+'use client'
 
-import { cn } from "cn";
-import { ChevronDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { cn } from 'cn'
+import {
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { PAGE_SIZES, pageCount } from "@/shell/collection/pager";
-import type { ShellPagerState } from "@/shell/collection/use-collection-page";
-import { formatLabel } from "@/shell/core/labels";
-import { useShellLabels } from "@/shell/core/labels-context";
+} from '@/components/ui/dropdown-menu'
+import { PAGE_SIZES, pageCount } from '@/shell/collection/pager'
+import type { ShellPagerState } from '@/shell/collection/use-collection-page'
+import { formatLabel } from '@/shell/core/labels'
+import { useShellLabels } from '@/shell/core/labels-context'
 
 export interface CollectionPagerProps extends ShellPagerState {
   /** Selected rows; the count line reads "selected / total" while it is above 0. */
-  selected?: number;
+  selected?: number
   /** Choices for the page-size menu (shown when `onPageSizeChange` is given). */
-  pageSizes?: readonly number[];
-  className?: string;
+  pageSizes?: readonly number[]
+  className?: string
 }
 
 /**
@@ -38,19 +44,34 @@ export function CollectionPager({
   pageSizes = PAGE_SIZES,
   className,
 }: CollectionPagerProps) {
-  const labels = useShellLabels();
-  const pages = pageCount(total, pageSize);
+  const labels = useShellLabels()
+  const pages = pageCount(total, pageSize)
   const steps = [
     { label: labels.firstPage, icon: ChevronsLeft, to: 1, disabled: page <= 1 },
-    { label: labels.previousPage, icon: ChevronLeft, to: page - 1, disabled: page <= 1 },
-    { label: labels.nextPage, icon: ChevronRight, to: page + 1, disabled: page >= pages },
-    { label: labels.lastPage, icon: ChevronsRight, to: pages, disabled: page >= pages },
-  ];
+    {
+      label: labels.previousPage,
+      icon: ChevronLeft,
+      to: page - 1,
+      disabled: page <= 1,
+    },
+    {
+      label: labels.nextPage,
+      icon: ChevronRight,
+      to: page + 1,
+      disabled: page >= pages,
+    },
+    {
+      label: labels.lastPage,
+      icon: ChevronsRight,
+      to: pages,
+      disabled: page >= pages,
+    },
+  ]
   return (
     <div
       data-slot="collection-pager"
       className={cn(
-        "flex h-11 shrink-0 items-center gap-3 border-t bg-background px-2 text-xs text-muted-foreground",
+        'flex h-11 shrink-0 items-center gap-3 border-t bg-background px-2 text-xs text-muted-foreground',
         className,
       )}
     >
@@ -62,7 +83,13 @@ export function CollectionPager({
       {onPageSizeChange && (
         <DropdownMenu>
           <DropdownMenuTrigger
-            render={<Button variant="ghost" size="xs" className="gap-1 text-muted-foreground" />}
+            render={
+              <Button
+                variant="ghost"
+                size="xs"
+                className="gap-1 text-muted-foreground"
+              />
+            }
           >
             {formatLabel(labels.pageSize, { size: pageSize })}
             <ChevronDown className="size-3" />
@@ -70,10 +97,14 @@ export function CollectionPager({
           <DropdownMenuContent align="end" className="w-auto min-w-28">
             <DropdownMenuRadioGroup
               value={String(pageSize)}
-              onValueChange={v => onPageSizeChange(Number(v))}
+              onValueChange={(v) => onPageSizeChange(Number(v))}
             >
-              {pageSizes.map(size => (
-                <DropdownMenuRadioItem key={size} value={String(size)} closeOnClick>
+              {pageSizes.map((size) => (
+                <DropdownMenuRadioItem
+                  key={size}
+                  value={String(size)}
+                  closeOnClick
+                >
                   {formatLabel(labels.pageSize, { size })}
                 </DropdownMenuRadioItem>
               ))}
@@ -99,5 +130,5 @@ export function CollectionPager({
         ))}
       </div>
     </div>
-  );
+  )
 }

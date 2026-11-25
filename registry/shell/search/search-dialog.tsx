@@ -1,7 +1,7 @@
-"use client";
+'use client'
 
-import type { LucideIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import type { LucideIcon } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import {
   Command,
   CommandDialog,
@@ -10,19 +10,19 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
-import { useShellLabels } from "@/shell/core/labels-context";
-import type { ShellSpace } from "@/shell/core/spaces";
-import { useShellNavigate } from "@/shell/router";
+} from '@/components/ui/command'
+import { useShellLabels } from '@/shell/core/labels-context'
+import type { ShellSpace } from '@/shell/core/spaces'
+import { useShellNavigate } from '@/shell/router'
 
 /** One hit of the host's search. */
 export interface ShellSearchResult {
-  id: string;
-  label: string;
+  id: string
+  label: string
   /** Muted text on the right, e.g. a short URL. */
-  detail?: string;
-  icon?: LucideIcon;
-  onSelect: () => void;
+  detail?: string
+  icon?: LucideIcon
+  onSelect: () => void
 }
 
 /**
@@ -37,60 +37,60 @@ export function SearchDialog({
   resultsLabel,
   limit = 8,
 }: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  spaces: ShellSpace[];
-  search?: (query: string, signal: AbortSignal) => Promise<ShellSearchResult[]>;
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  spaces: ShellSpace[]
+  search?: (query: string, signal: AbortSignal) => Promise<ShellSearchResult[]>
   /** Heading of the results group. */
-  resultsLabel?: string;
-  limit?: number;
+  resultsLabel?: string
+  limit?: number
 }) {
-  const labels = useShellLabels();
-  const navigate = useShellNavigate();
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState<ShellSearchResult[]>([]);
-  const [pending, setPending] = useState(false);
-  const [failed, setFailed] = useState(false);
+  const labels = useShellLabels()
+  const navigate = useShellNavigate()
+  const [query, setQuery] = useState('')
+  const [results, setResults] = useState<ShellSearchResult[]>([])
+  const [pending, setPending] = useState(false)
+  const [failed, setFailed] = useState(false)
 
   useEffect(() => {
-    if (!open) setQuery("");
-  }, [open]);
+    if (!open) setQuery('')
+  }, [open])
 
   useEffect(() => {
-    const q = query.trim();
-    setFailed(false);
+    const q = query.trim()
+    setFailed(false)
     if (!search || !q) {
-      setResults([]);
-      setPending(false);
-      return;
+      setResults([])
+      setPending(false)
+      return
     }
-    setPending(true);
-    const controller = new AbortController();
+    setPending(true)
+    const controller = new AbortController()
     const id = setTimeout(() => {
       search(q, controller.signal)
-        .then(r => {
-          if (!controller.signal.aborted) setResults(r.slice(0, limit));
+        .then((r) => {
+          if (!controller.signal.aborted) setResults(r.slice(0, limit))
         })
         .catch(() => {
-          if (controller.signal.aborted) return;
-          setResults([]);
-          setFailed(true);
+          if (controller.signal.aborted) return
+          setResults([])
+          setFailed(true)
         })
         .finally(() => {
-          if (!controller.signal.aborted) setPending(false);
-        });
-    }, 200);
+          if (!controller.signal.aborted) setPending(false)
+        })
+    }, 200)
     return () => {
-      clearTimeout(id);
-      controller.abort();
-    };
-  }, [query, search, limit]);
+      clearTimeout(id)
+      controller.abort()
+    }
+  }, [query, search, limit])
 
   const go = (run: () => void) => {
-    onOpenChange(false);
-    run();
-  };
-  const q = query.trim().toLowerCase();
+    onOpenChange(false)
+    run()
+  }
+  const q = query.trim().toLowerCase()
 
   return (
     <CommandDialog
@@ -107,7 +107,10 @@ export function SearchDialog({
         />
         <CommandList>
           {results.length === 0 && (pending || failed) ? (
-            <div role="status" className="py-3 text-center text-sm text-muted-foreground">
+            <div
+              role="status"
+              className="py-3 text-center text-sm text-muted-foreground"
+            >
               {pending ? labels.loading : labels.searchFailed}
             </div>
           ) : (
@@ -115,10 +118,14 @@ export function SearchDialog({
           )}
           {results.length > 0 && (
             <CommandGroup heading={resultsLabel}>
-              {results.map(r => {
-                const Icon = r.icon;
+              {results.map((r) => {
+                const Icon = r.icon
                 return (
-                  <CommandItem key={r.id} value={`result:${r.id}`} onSelect={() => go(r.onSelect)}>
+                  <CommandItem
+                    key={r.id}
+                    value={`result:${r.id}`}
+                    onSelect={() => go(r.onSelect)}
+                  >
                     {Icon && <Icon />}
                     <span className="truncate">{r.label}</span>
                     {r.detail && (
@@ -127,15 +134,15 @@ export function SearchDialog({
                       </span>
                     )}
                   </CommandItem>
-                );
+                )
               })}
             </CommandGroup>
           )}
           <CommandGroup heading={labels.goTo}>
             {spaces
-              .filter(s => s.label.toLowerCase().includes(q))
-              .map(s => {
-                const Icon = s.icon;
+              .filter((s) => s.label.toLowerCase().includes(q))
+              .map((s) => {
+                const Icon = s.icon
                 return (
                   <CommandItem
                     key={s.key}
@@ -145,11 +152,11 @@ export function SearchDialog({
                     <Icon />
                     {s.label}
                   </CommandItem>
-                );
+                )
               })}
           </CommandGroup>
         </CommandList>
       </Command>
     </CommandDialog>
-  );
+  )
 }

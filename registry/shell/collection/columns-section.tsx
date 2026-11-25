@@ -1,9 +1,9 @@
-"use client";
+'use client'
 
-import type { ShellColumn } from "@/shell/collection/columns";
-import { columnLabel, hideableColumns } from "@/shell/collection/columns";
-import { useShellLabels } from "@/shell/core/labels-context";
-import { MenuSection, MenuSwitch } from "@/shell/menus/menus";
+import type { ShellColumn } from '@/shell/collection/columns'
+import { columnLabel, hideableColumns } from '@/shell/collection/columns'
+import { useShellLabels } from '@/shell/core/labels-context'
+import { MenuSection, MenuSwitch } from '@/shell/menus/menus'
 
 /** The display menu's column switches for a `CollectionTable`. */
 export function ColumnsSection<T>({
@@ -11,14 +11,14 @@ export function ColumnsSection<T>({
   hidden,
   onToggle,
 }: {
-  columns: ShellColumn<T>[];
-  hidden: readonly string[];
-  onToggle: (key: string) => void;
+  columns: ShellColumn<T>[]
+  hidden: readonly string[]
+  onToggle: (key: string) => void
 }) {
-  const labels = useShellLabels();
+  const labels = useShellLabels()
   return (
     <MenuSection label={labels.columns}>
-      {hideableColumns(columns).map(c => (
+      {hideableColumns(columns).map((c) => (
         <MenuSwitch
           key={c.key}
           label={columnLabel(c)}
@@ -27,5 +27,5 @@ export function ColumnsSection<T>({
         />
       ))}
     </MenuSection>
-  );
+  )
 }

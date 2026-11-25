@@ -1,23 +1,23 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
-import { useShellLabels } from "@/shell/core/labels-context";
-import { useShellNavigating } from "@/shell/router";
+import { useEffect, useState } from 'react'
+import { useShellLabels } from '@/shell/core/labels-context'
+import { useShellNavigating } from '@/shell/router'
 
 /** A thin bar along the top of the content card while a navigation is pending, after a short delay. */
 export function NavigationProgress() {
-  const labels = useShellLabels();
-  const loading = useShellNavigating();
-  const [visible, setVisible] = useState(false);
+  const labels = useShellLabels()
+  const loading = useShellNavigating()
+  const [visible, setVisible] = useState(false)
   useEffect(() => {
     if (!loading) {
-      setVisible(false);
-      return;
+      setVisible(false)
+      return
     }
-    const id = setTimeout(setVisible, 150, true);
-    return () => clearTimeout(id);
-  }, [loading]);
-  if (!visible) return null;
+    const id = setTimeout(setVisible, 150, true)
+    return () => clearTimeout(id)
+  }, [loading])
+  if (!visible) return null
   return (
     <div
       role="progressbar"
@@ -26,5 +26,5 @@ export function NavigationProgress() {
     >
       <div className="h-full w-1/3 animate-[shell-nav-progress_1.1s_ease-in-out_infinite] bg-primary" />
     </div>
-  );
+  )
 }
