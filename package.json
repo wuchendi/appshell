@@ -1,13 +1,22 @@
 {
   "name": "@cdlab/appshell",
-  "type": "module",
+  "version": "0.4.1",
   "private": true,
+  "description": "A dashboard app shell (rail, content card, space panels, page header, list menus, search dialog, intro) shipped as a shadcn registry under @cdlab.",
+  "homepage": "https://github.com/wuchendi/appshell",
+  "bugs": {
+    "url": "https://github.com/wuchendi/appshell/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wuchendi/appshell.git"
+  },
+  "license": "MIT",
+  "author": "wudi <wuchendi96@gmail.com>",
+  "type": "module",
   "workspaces": [
     "apps/*"
   ],
-  "catalog": {
-    "shadcn": "4.23.0"
-  },
   "scripts": {
     "lint": "biome check",
     "lint:fix": "biome check --write",
@@ -27,5 +36,12 @@
     "next": "16.4.6",
     "shadcn": "catalog:",
     "typescript": "npm:@typescript/typescript6@6.0.2"
+  },
+  "catalog": {
+    "shadcn": "4.23.0"
+  },
+  "packageManager": "bun@1.4.4",
+  "engines": {
+    "bun": ">=1.4.4"
   }
 }
