@@ -13,3 +13,4 @@
 | [x] | wepush-requirements — rail fold, portaled row clicks, row checkbox name, bare-key guard, search pending, column label, page top, monorepo docs (v0.4.1) | docs/plan/202611230840-wepush-requirements.md |
 | [x] | posera-feedback — search detail and media, node counts, client prefs, next-intl recipe, Biome recommended, TanStack resolved pathname (v0.4.2) | docs/plan/202611250900-posera-feedback.md |
 | [x] | bks-requirements — TanStack link current state, rail badge, configurable new key (v0.4.3) | — |
+| [x] | no-prefs — README: a fixed `prefs` object starts every load in that state (no code change) | — |

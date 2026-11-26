@@ -156,7 +156,8 @@ Server Component can import.
   pages; folding never remounts the page. Whether the panel is open and its width (one for every
   space) live in the `appshell` cookie (`readShellPrefs` / `shellPrefsCookie`); without a `prefs`
   prop the shell reads `document.cookie` while rendering (client-only hosts), and with
-  `prefs="client"` right after hydration (static hosts). `useShellPanel()` gives the open state and its setters.
+  `prefs="client"` right after hydration (static hosts). A fixed object (`prefs={{ panelOpen: false }}`
+  or `true`) starts every load in that state, whatever the cookie holds. `useShellPanel()` gives the open state and its setters.
   A rail entry navigates to its space's `href`; only when that page is already shown and the space
   has a panel does the click fold or unfold the panel instead. From a detail page below `href` the
   entry goes back to `href`, and a space without a panel always navigates.
